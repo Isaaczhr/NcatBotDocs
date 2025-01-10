@@ -1,17 +1,18 @@
 ---
-title: 快速开始
-createTime: 2025/01/11 04:09:28
-permalink: /guide/x2kat0fj/
-icon: codicon:debug-start
+title: 欢迎！
+createTime: 2025/01/11 04:50:08
+permalink: /guide/ucli0mqd/
+icon: material-symbols:start-rounded
 ---
-## 欢迎！
+<script setup>
+import RepoCard from 'vuepress-theme-plume/features/RepoCard.vue'
+</script>
 
-NcatBot是一个开源的基于Napcat.QQ开发的PythonSDK，使用python调用QQ。
+NcatBot 是一个开源的基于 NapCatQQ 开发的 PythonSDK ，使用 python 调用 QQ 。
 
-使用简单的代码，你就可以完成一个能够处理所有信息的QQ机器人。
+本项目旨在使用简单的代码，帮你完成一个能够处理所有信息的 QQ 机器人。
 
-你还可以使用别人编写的插件！！！
-
-## 你好！
-
-
+这个文档会带你了解 NcatBot ，并构建一个简单的入门机器人示例。
+<!-- 导入后，即可在 markdown 中使用 -->
+<RepoCard repo="liyihao1110/NcatBot" />
+👆👆👆👆关注我们👆👆👆👆

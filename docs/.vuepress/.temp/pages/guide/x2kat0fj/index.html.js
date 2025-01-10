@@ -1,5 +1,5 @@
 import comp from "/home/isaac/GitHub/docs.ncatbot.xyz/docs/.vuepress/.temp/pages/guide/x2kat0fj/index.html.vue"
-const data = JSON.parse("{\"path\":\"/guide/x2kat0fj/\",\"title\":\"快速开始\",\"lang\":\"zh-CN\",\"frontmatter\":{\"title\":\"快速开始\",\"createTime\":\"2025/01/11 04:09:28\",\"permalink\":\"/guide/x2kat0fj/\",\"icon\":\"codicon:debug-start\",\"gitInclude\":[]},\"headers\":[],\"readingTime\":{\"minutes\":0.27,\"words\":81},\"filePathRelative\":\"notes/guide/快速开始/README.md\",\"bulletin\":false}")
+const data = JSON.parse("{\"path\":\"/guide/x2kat0fj/\",\"title\":\"快速开始\",\"lang\":\"zh-CN\",\"frontmatter\":{\"title\":\"快速开始\",\"createTime\":\"2025/01/11 04:09:28\",\"permalink\":\"/guide/x2kat0fj/\",\"icon\":\"codicon:debug-start\",\"gitInclude\":[]},\"headers\":[],\"readingTime\":{\"minutes\":0.26,\"words\":79},\"filePathRelative\":\"notes/guide/快速开始/README.md\",\"bulletin\":false}")
 export { comp, data }
 
 if (import.meta.webpackHot) {
