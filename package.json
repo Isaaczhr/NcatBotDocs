@@ -1,0 +1,19 @@
+{
+  "name": "docs.ncatbot.xyz",
+  "version": "1.0.0",
+  "description": "NcatBot Docs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "docs:dev": "vuepress dev docs",
+    "docs:build": "vuepress build docs"
+  },
+  "author": "Isaac",
+  "license": "ISC",
+  "devDependencies": {
+    "@vuepress/bundler-vite": "^2.0.0-rc.19",
+    "@vuepress/theme-default": "^2.0.0-rc.69",
+    "sass-embedded": "^1.83.1",
+    "vuepress": "^2.0.0-rc.19"
+  }
+}
