@@ -14,7 +14,12 @@ export default defineUserConfig({
     ]
   ],
   theme: plumeTheme({
+    lang: 'zh-CN',
+    locales: {
+      '/': { lang: 'zh-CN', title: '文档' }
+    },
     blog: false,
+    plot: true,
     sidebar: 'auto',
     notes,
     changelog: true,
