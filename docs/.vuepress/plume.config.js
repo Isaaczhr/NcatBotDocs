@@ -18,6 +18,12 @@ export default defineThemeConfig({
     shiki: {
       theme: { light: 'vitesse-light', dark: 'vitesse-dark' },
     },
+    markdownPower: {
+      demo: true, // 启用新的代码演示功能
+    },
+    markdownEnhance: {
+      demo: false, // 禁用旧的代码演示功能
+    }
   },
   footer: { message: "", copyright: "© 2025 NcatBot" }
 })
