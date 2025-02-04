@@ -30,8 +30,4 @@ config:
           theme: alt
           text: Github
           link: https://github.com/liyihao1110/NcatBot
-        -
-          theme: alt
-          text: 插件商店
-          link: https://plugins.ncatbot.xyz
 ---
