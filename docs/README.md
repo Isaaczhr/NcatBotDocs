@@ -20,7 +20,7 @@ config:
     hero:
       name: NcatBot
       tagline: Python SDK Framework
-      text: 基于Napcat的PythonSDK
+      text: 基于 Napcat 的 Python SDK
       actions:
         -
           theme: brand
@@ -28,6 +28,11 @@ config:
           link: /guide/zxn1zv1t/
         -
           theme: alt
-          text: Github
+          text: NcatBot
           link: https://github.com/liyihao1110/NcatBot
+        
+        -
+          theme: alt
+          text: NcatBotDocs
+          link: https://github.com/Isaaczhr/docs.ncatbot.xyz
 ---
