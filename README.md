@@ -6,7 +6,7 @@
 
 如果只做简单的文本修改, 可以只修改对应的 .md 文件并 PR, 如果修改比较繁琐, 请参考以下步骤:
 
-1. 阅读 [VuePress 文档](https://v2.vuepress.vuejs.org/zh/) 了解 VuePress 的使用方法.
+1. 阅读 [VuePress 文档](https://v2.vuepress.vuejs.org/zh/) 和[Plume 主题文档](https://theme-plume.vuejs.press/)了解 VuePress 的使用方法.
 
 2. 使用 1. 中学到的知识对文档进行修改.
 
