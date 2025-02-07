@@ -29,6 +29,7 @@ export default defineUserConfig({
       },
       markdownPower: {
         imageSize: 'all', // 'local' | 'all'
+        plot: true,
       },
     }
   }),
