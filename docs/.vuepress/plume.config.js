@@ -15,22 +15,11 @@ export default defineThemeConfig({
   contributors: true,
   plugins: {
     git: process.env.NODE_ENV === 'production',
-    shiki: {
-      theme: { light: 'vitesse-light', dark: 'vitesse-dark' },
-    },
     markdownPower: {
       demo: true, // 启用新的代码演示功能
     },
     markdownEnhance: {
       demo: false, // 禁用旧的代码演示功能
-    },
-    comment: {
-      provider: 'Giscus', // "Artalk“ | "Giscus" | "Twikoo" | "Waline"
-      comment: true,
-      repo: 'Isaaczhr/docs.ncatbot.xyz',
-      repoId: 'R_kgDONolemw',
-      category: 'General',
-      categoryId: 'DIC_kwDONolem84CmvqM',
     },
   },
   footer: { message: "", copyright: "© 2025 NcatBot" },

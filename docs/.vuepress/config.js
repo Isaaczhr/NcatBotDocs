@@ -19,6 +19,17 @@ export default defineUserConfig({
       shiki: {
         languages: ['yaml', 'python', 'shell'],
       },
+      comment: {
+        provider: 'Giscus', // "Artalk“ | "Giscus" | "Twikoo" | "Waline"
+        comment: true,
+        repo: 'Isaaczhr/docs.ncatbot.xyz',
+        repoId: 'R_kgDONolemw',
+        category: 'General',
+        categoryId: 'DIC_kwDONolem84CmvqM',
+      },
+      markdownPower: {
+        imageSize: 'all', // 'local' | 'all'
+      },
     }
   }),
   bundler: viteBundler(),
