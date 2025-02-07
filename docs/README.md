@@ -3,8 +3,7 @@ home: true
 title: NcatBot 文档
 icon: solar:cat-linear
 config:
- -
-    type: hero
+  - type: hero
     background: tint-plate
     tintPlate:
       r:
@@ -22,17 +21,13 @@ config:
       tagline: Python SDK Framework
       text: 基于 Napcat 的 Python SDK
       actions:
-        -
-          theme: brand
+        - theme: brand
           text: 快速开始 →
           link: /guide/zxn1zv1t/
-        -
-          theme: alt
+        - theme: alt
           text: NcatBot
           link: https://github.com/liyihao1110/NcatBot
-        
-        -
-          theme: alt
+        - theme: alt
           text: NcatBotDocs
           link: https://github.com/Isaaczhr/docs.ncatbot.xyz
 ---
