@@ -23,7 +23,16 @@ export default defineThemeConfig({
     },
     markdownEnhance: {
       demo: false, // 禁用旧的代码演示功能
-    }
+    },
+    comment: {
+      provider: 'Giscus', // "Artalk“ | "Giscus" | "Twikoo" | "Waline"
+      comment: true,
+      repo: 'Isaaczhr/docs.ncatbot.xyz',
+      repoId: 'R_kgDONolemw',
+      category: 'General',
+      categoryId: 'DIC_kwDONolem84CmvqM',
+    },
   },
-  footer: { message: "", copyright: "© 2025 NcatBot" }
+  footer: { message: "", copyright: "© 2025 NcatBot" },
+  copyright: 'CC-BY-4.0',
 })

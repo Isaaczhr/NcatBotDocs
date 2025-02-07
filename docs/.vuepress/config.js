@@ -14,6 +14,12 @@ export default defineUserConfig({
   locales: {
     '/': { lang: 'zh-CN', title: 'NcatBot 文档' }
   },
-  theme: plumeTheme(),
+  theme: plumeTheme({
+    plugins: {
+      shiki: {
+        languages: ['yaml', 'python', 'shell'],
+      },
+    }
+  }),
   bundler: viteBundler(),
 })
