@@ -15,6 +15,7 @@ export default defineUserConfig({
     '/': { lang: 'zh-CN', title: 'NcatBot 文档' }
   },
   theme: plumeTheme({
+    hostname: 'http://plugins.ncatbot.xyz',
     plugins: {
       shiki: {
         languages: ['yaml', 'python', 'shell'],

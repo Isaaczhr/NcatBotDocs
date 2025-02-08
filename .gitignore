@@ -25,3 +25,5 @@ packages/@vuepress/shared-utils/lib/
 packages/@vuepress/shared-utils/types/
 /docs/.vuepress/.cache
 /docs/.vuepress/.temp
+
+dist/
