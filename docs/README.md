@@ -23,7 +23,7 @@ config:
       actions:
         - theme: brand
           text: 快速开始 →
-          link: /guide/zxn1zv1t/
+          link: /guide/dto79lp7/
         - theme: alt
           text: NcatBot
           link: https://github.com/liyihao1110/NcatBot

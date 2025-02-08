@@ -7,7 +7,7 @@ export default defineThemeConfig({
   plot: true,
   navbar: [
     { text: '首页', link: '/' },
-    { text: '快速开始', link: '/guide/zxn1zv1t/' },
+    { text: '快速开始', link: '/guide/dto79lp7/' },
   ],
   sidebar: 'auto',
   notes,
