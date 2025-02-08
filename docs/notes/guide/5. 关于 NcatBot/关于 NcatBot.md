@@ -1,5 +1,5 @@
 ---
-title: 简单认识
+title: 认识 NcatBot
 createTime: 2025/01/23 20:00:05
 permalink: /guide/zxn1zv1t/
 ---
@@ -17,7 +17,9 @@ NcatBot 是 [NapCat](https://github.com/NapNeko/NapCatQQ) 的 Python SDK (开发
 
 ## 加入我们
 
-如果你对项目有更好的想法, 欢迎加入我们! 
+呀, 木子喵真的太可爱了, 我也想...
+
+咳咳, 嗯, 如果你对项目有更好的想法, 欢迎加入我们! 
 
 这是我们的[交流群](https://qm.qq.com/q/L6XGXYqL86), 群里面有用我们的项目搭建的 QQ 机器人, 所谓百闻不如一见, 大家可以进群体验喵~
 
