@@ -5,6 +5,7 @@ export default defineThemeConfig({
   lang: 'zh-CN',
   blog: false,
   plot: true,
+  hostname: 'http://plugins.ncatbot.xyz',
   navbar: [
     { text: '首页', link: '/' },
     { text: '快速开始', link: '/guide/dto79lp7/' },
