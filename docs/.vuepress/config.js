@@ -16,6 +16,9 @@ export default defineUserConfig({
   },
   theme: plumeTheme({
     hostname: 'http://plugins.ncatbot.xyz',
+    docsRepo: 'https://github.com/Isaaczhr/docs.ncatbot.xyz',
+    docsBranch: 'master',
+    docsDir: 'docs',
     plugins: {
       shiki: {
         languages: ['yaml', 'python', 'shell'],
