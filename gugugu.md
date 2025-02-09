@@ -1,15 +1,3 @@
----
-title: 发送消息
-createTime: 2025/01/23 20:00:05
-permalink: /guide/p8aun9nh/
----
-## 介绍
-
----
-NcatBot提供了四个函数用来机器人向用户发送各种类型的消息，分别是`post_group_msg`，`post_private_msg`，`post_group_file`，`post_private_file`  
-::: warning  
-`send_group_msg`，`send_private_msg`已在`1.0.4`版本废除  
-:::
 ## 发送群消息 (post_group_msg)
 ---
 用于向指定群发送消息，支持多种消息类型和组合方式。  
