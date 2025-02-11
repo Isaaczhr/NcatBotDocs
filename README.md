@@ -14,11 +14,10 @@
    
     1. 安装 node.js (推荐 node.js >= 18.19.0)
 
-    2. 安装 vuepress
+    2. 更新 npm 并安装模块依赖
 
     ```
     npm install -g npm@latest
-    npm install -g vuepress
     ```
 
     3. 本地预览
