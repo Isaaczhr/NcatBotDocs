@@ -21,7 +21,7 @@ export default defineUserConfig({
     docsDir: 'docs',
     plugins: {
       shiki: {
-        languages: ['yaml', 'python', 'shell'],
+        languages: ['yaml', 'python', 'shell', 'json'],
       },
       comment: {
         provider: 'Giscus', // "Artalk“ | "Giscus" | "Twikoo" | "Waline"
