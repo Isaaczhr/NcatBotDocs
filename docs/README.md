@@ -31,6 +31,6 @@ config:
           icon: mdi:github
         - theme: alt
           text: NcatBotDocs
-          link: https://github.com/Isaaczhr/docs.ncatbot.xyz
+          link: https://github.com/Isaaczhr/NcatBotDocs
           icon: mdi:github
 ---
