@@ -8,7 +8,7 @@ export default defineUserConfig({
   lang: 'zh-CN',
   head: [
     [
-        'link', { rel: 'icon', href: '/images/solar--cat-linear.svg' },
+        'link', { rel: 'icon', href: '/images/logo.png' },
     ]
   ],
   locales: {

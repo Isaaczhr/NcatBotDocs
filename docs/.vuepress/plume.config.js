@@ -4,6 +4,7 @@ import notes from './notes/index.js'
 export default defineThemeConfig({
   lang: 'zh-CN',
   blog: false,
+  logo: '/images/logo.png',
   plot: true,
   social: [
     { icon: 'github', link: 'https://github.com/liyihao1110/ncatbot' },
