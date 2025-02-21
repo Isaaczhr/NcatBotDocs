@@ -8,25 +8,25 @@ export default defineUserConfig({
   lang: 'zh-CN',
   head: [
     [
-        'link', { rel: 'icon', href: '/images/solar--cat-linear.svg' },
+        'link', { rel: 'icon', href: '/images/logo.png' },
     ]
   ],
   locales: {
     '/': { lang: 'zh-CN', title: 'NcatBot 文档' }
   },
   theme: plumeTheme({
-    hostname: 'http://plugins.ncatbot.xyz',
-    docsRepo: 'https://github.com/Isaaczhr/docs.ncatbot.xyz',
+    hostname: 'http://docs.ncatbot.xyz',
+    docsRepo: 'https://github.com/Isaaczhr/NcatBotDocs',
     docsBranch: 'master',
     docsDir: 'docs',
     plugins: {
       shiki: {
-        languages: ['yaml', 'python', 'shell'],
+        languages: ['yaml', 'python', 'shell', 'json'],
       },
       comment: {
         provider: 'Giscus', // "Artalk“ | "Giscus" | "Twikoo" | "Waline"
         comment: true,
-        repo: 'Isaaczhr/docs.ncatbot.xyz',
+        repo: 'Isaaczhr/NcatBotDocs',
         repoId: 'R_kgDONolemw',
         category: 'General',
         categoryId: 'DIC_kwDONolem84CmvqM',

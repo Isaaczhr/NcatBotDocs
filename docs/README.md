@@ -22,12 +22,15 @@ config:
       text: 基于 Napcat 的 Python SDK
       actions:
         - theme: brand
-          text: 快速开始 →
+          text: 快速开始
           link: /guide/dto79lp7/
+          suffixIcon: material-symbols:start-rounded
         - theme: alt
           text: NcatBot
           link: https://github.com/liyihao1110/NcatBot
+          icon: mdi:github
         - theme: alt
           text: NcatBotDocs
-          link: https://github.com/Isaaczhr/docs.ncatbot.xyz
+          link: https://github.com/Isaaczhr/NcatBotDocs
+          icon: mdi:github
 ---
