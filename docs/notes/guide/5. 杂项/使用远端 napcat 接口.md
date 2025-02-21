@@ -16,12 +16,12 @@ permalink: /guide/inxart0k/
 
 ## 运行
 
-`bot.run()` 的 `reload` 参数改为 `True` 关闭本地 napcat 服务检查.
+`bot.run()` 有一个 `reload` 参数, 最好改为 `True` 以关闭本地 napcat 服务检查.
 
 ::: code-tabs
 @tab python
 ```python
 if __name__ == "__main__":
-    bot.run(True)
+    bot.run(reload=True)
 ```
 :::
