@@ -20,8 +20,10 @@ permalink: /guide/inxart0k/
 
 ::: code-tabs
 @tab python
+
 ```python
 if __name__ == "__main__":
     bot.run(reload=True)
 ```
+
 :::
