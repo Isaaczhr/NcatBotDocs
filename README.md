@@ -16,7 +16,7 @@
 
     2. 更新 npm 并安装模块依赖
 
-        ```bash
+        ```shell
         npm install -g npm@latest
         ```
 
@@ -24,7 +24,7 @@
 
     ==重启终端==, 切换到本项目目录下, 执行:
 
-    ```bash
+    ```shell
     npm install
     npm run docs:dev
     ```
