@@ -5,7 +5,7 @@ permalink: /guide/zxn1zv1t/
 ---
 ## 最好的 NcatBot
 
-![NcatBot](https://socialify.git.ci/liyihao1110/NcatBot/image?description=1&forks=1&issues=1&language=1&logo=https%3A%2F%2Fa.imgckr.com%2F2024%2F12%2F29%2FJO1OJ.png&name=1&owner=1&pulls=1&stargazers=1&theme=Auto)
+![NcatBot](https://socialify.git.ci/liyihao1110/NcatBot/image?description=1&forks=1&issues=1&language=1&logo=https%3a%2f%2fdocs.ncatbot.xyz%2fimages%2flogo.png&name=1&owner=1&pulls=1&stargazers=1&theme=Auto)
 
 ## 简单认识
 
