@@ -4,26 +4,24 @@ createTime: 2025/02/09 16:45:00
 permalink: /guide/inxart0k/
 ---
 
-## 远端配置
+由于 QQ 风控, 不建议频繁开关 NapCat, 因此将 NapCat 部署到远端服务器上可以避免关机导致的中断.
 
-按照 napcat 的文档配置好远端 napcat 服务.
+## 准备工作
 
-获取 napcat websocket 的 token(不是 webui 的 token).
+1. 获取服务器公网 IP.
+2. 开放系统防火墙的 3000, 3001, 6099 端口.
+3. 开放服务商防火墙的 3000, 3001, 6099 端口.
 
-## NcatBot 配置
+## 自动配置远端 NapCat 服务器
 
-参考[配置项](../2.%20配置项.md), 完成 `ws_uri` 和 `token` 的设置.
+在远端正常运行 NcatBot. ==`ws_uri` 填写为 `ws://服务器公网 IP:3001`.==
 
-## 运行
+Ncatbot 会进行自动登录的引导. Ncatbot 显示连接成功后, 关闭 Ncatbot 即可.
 
-`bot.run()` 有一个 `reload` 参数, 最好改为 `True` 以关闭本地 napcat 服务检查.
+本地 Ncatbot 会自动连接远端 NapCat 服务器, `ws_uri` 和 `token` 需要保证和远端运行 NcatBot 时填写的一致.
 
-::: code-tabs
-@tab python
+## 手动配置远端 NapCat 服务器
 
-```python
-if __name__ == "__main__":
-    bot.run(reload=True)
-```
+根据 [NapCat 文档](https://napneko.github.io/), 在远端正确配置 NapCat 及其 WebSocket 服务器.
 
-:::
+本地运行 NcatBot, `ws_uri` 填写为 `ws://服务器公网 IP:{你配置时填写的端口}`. `token` 填写为 WebSocket 的 token(注意不是 webui 的 token, WebSocket token 默认为空字符串).
