@@ -859,7 +859,7 @@ NcatBot 的生命周期按照时间顺序分为以下几步:
 2. 根据插件 meta 中的依赖信息构建加载拓扑图.
 3. 加载每个插件
    1. 加载插件私有可持久化数据(包括配置项).
-   2. 调用插件 `BasePlugin.onload` 函数, 执行自定义初始化操作.
+   2. 调用插件 `BasePlugin.on_load` 函数, 执行自定义初始化操作.
    3. 事件总线注册**插件功能**和**插件配置项**.
 
 ### 运行
@@ -3206,7 +3206,7 @@ permalink: /guide/loadplg/
 
 ## 插件加载
 
-`BasePlugin` 提供 `onload` 方法, 重写 `onload` 方法可以在在插件加载时执行一些任务.
+`BasePlugin` 提供 `on_load` 方法, 重写 `on_load` 方法可以在在插件加载时执行一些任务.
 
 一般来说, 以下工作需要**你**在插件加载时完成:
 
@@ -3218,7 +3218,7 @@ permalink: /guide/loadplg/
 
 ```python
 class MyPlugin(BasePlugin):
-    def onload(self):
+    def on_load(self):
         print(f"插件 {self.name} 加载成功")
 ```
 
@@ -3229,7 +3229,7 @@ class MyPlugin(BasePlugin):
 
 一般来说, 以下工作需要**你**在插件卸载时完成:
 
-- 其它你**自定义的**需要在加载时初始化的任务(对应 `onload` 方法中的自定义任务).
+- 其它你**自定义的**需要在加载时初始化的任务(对应 `on_load` 方法中的自定义任务).
 
 如果你希望数据能够被保存下来以便下次使用, 一般无需自行实现, 可以使用[内置可持久化数据](./4.%20内置可持久化数据.md)或者[插件配置项](./3.%20插件的交互系统/3.4%20内置功能.md#插件配置项).
 
@@ -3653,7 +3653,7 @@ permalink: /guide/timertask/
     * 自然语言: '2天3小时5秒'
 ```
 
-一般在 `BasePlugin.onload()` 方法中时注册定时任务.
+一般在 `BasePlugin.on_load()` 方法中时注册定时任务.
 
 ### 函数原型参考
 
