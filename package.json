@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs",
-    "export-pdf": "press-export-pdf export docs"
+    "export-pdf": "press-export-pdf export docs",
+    "concat-md": "node scripts/concat-md.js"
   },
   "author": "Isaac",
   "license": "ISC",
