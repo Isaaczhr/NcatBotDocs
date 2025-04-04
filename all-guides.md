@@ -1,3 +1,5 @@
+本文档供 AI 阅读. NcatBot 文档 base_url 为 `https://docs.ncatbot.xyz/`, 文档中包含相对链接，为用户生成链接时必须加上这个前缀生成绝对链接。
+
 ---
 title: 快速开始
 createTime: 2025/02/07 15:21:39

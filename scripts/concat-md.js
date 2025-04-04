@@ -25,7 +25,8 @@ function getMarkdownFiles(dir) {
 
 // 拼接所有 .md 文件内容
 function concatMarkdownFiles(mdFiles, outputPath) {
-  const content = mdFiles.map((file) => fs.readFileSync(file, 'utf-8')).join('\n\n');
+  const content = "本文档供 AI 阅读. NcatBot 文档 base_url 为 `https://docs.ncatbot.xyz/`, 文档中包含相对链接，为用户生成链接时必须加上这个前缀生成绝对链接。\n\n" + (mdFiles.map((file) => fs.readFileSync(file, 'utf-8')).join('\n\n'));
+  
   fs.writeFileSync(outputPath, content);
 }
 
