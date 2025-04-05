@@ -51,6 +51,35 @@ permalink: /guide/linuxins/
 
 如果使用 Debian/Ubuntu 并且版本低于 `22.04`(不包括), ==需要手动更新 Python 版本到 `3.10` 及以上, 推荐更新到 `3.12`.==
 
+### 安装 NcatBot
+
+项目已经发布到 PYPI, 可以使用 pip 直接下载本项目.
+
+另外, 如果你下载过 github 上的 .zip 压缩文件并解压出来过, 请**删掉它们**.
+
+在终端直接运行:
+
+::: code-tabs
+@tab pip(稳定版, 推荐)
+
+```shell
+pip install ncatbot -U -i https://mirrors.aliyun.com/pypi/simple
+```
+
+@tab Gitee(过时, 不推荐)
+
+```shell
+pip install git+https://gitee.com/li-yihao0328/nc_bot.git
+```
+
+@tab GitHub(开发预览版, 不推荐)
+
+```shell
+pip install git+https://github.com/liyihao1110/ncatbot.git
+```
+
+:::
+
 ### 安装其它基本工具
 
 `curl` 必须安装, 其它工具的安装可以跳过.
@@ -69,6 +98,8 @@ sudo dnf install -y epel-release && sudo dnf install --allowerasing -y zip unzip
 ## 检查网络环境
 
 NcatBot 需要使用 `3000`、`3001`、`6099` 三个端口, 请确保你的**服务器**以及**系统**均已经放通了这三个端口.
+
+`3000` 的需求并非强制的, 可以忽略, `3001`, `6099` 分别是默认的 websocket 端口和 WebUI 端口, 必须保证放通. 当然, 你可以通过[配置项](../2.%20基本开发/2.%20配置项.md)修改端口.
 
 ### 服务器防火墙
 
@@ -162,8 +193,6 @@ _log = get_log()
 
 config.set_bot_uin("123456")  # 设置 bot qq 号 (必填)
 config.set_root("123456")  # 设置 bot 超级管理员账号 (建议填写)
-config.set_ws_uri("ws://localhost:3001")  # 设置 napcat websocket server 地址
-config.set_token("")  # 设置 token (napcat 服务器的 token)
 
 bot = BotClient()
 
@@ -196,6 +225,7 @@ if __name__ == "__main__":
 ### 更多
 
 查阅 [FAQ](../7.%20常见问题/1.%20安装时常见问题.md)
+
 
 ---
 title: Window 安装
@@ -355,8 +385,6 @@ _log = get_log()
 
 config.set_bot_uin("123456")  # 设置 bot qq 号 (必填)
 config.set_root("123456")  # 设置 bot 超级管理员账号 (建议填写)
-config.set_ws_uri("ws://localhost:3001")  # 设置 napcat websocket server 地址
-config.set_token("")  # 设置 token (napcat 服务器的 token)
 
 bot = BotClient()
 
@@ -498,7 +526,7 @@ permalink: /guide/devguide/
 
 ## 概览
 
-### NcatBot 的两种开发范式
+### NcatBot 的几种开发范式
 
 #### BotClient 项目
 
@@ -518,6 +546,10 @@ permalink: /guide/devguide/
 实际插件项目参考:
 
 - [LLM_API 插件项目](../8.%20实际项目参考/2.%20LLM_API%20插件项目.md).
+
+#### 嵌入到已有项目
+
+咕咕咕
 
 ### 学习路径
 
@@ -547,6 +579,7 @@ permalink: /guide/devguide/
   - [简单 BotClient 项目](../8.%20实际项目参考/1.%20简单%20BotClient%20项目.md)
 - 阅读[事件上报](../3.%20事件处理/2.%20事件上报.md), 了解能够监听和处理的事件类型.
 - 补充学习: 按照文档导航补充学习其它知识, 或者使用文档项目的搜索功能.
+
 
 ## 文档导航
 
@@ -672,8 +705,6 @@ from ncatbot.utils.logger import get_log
 # ========== 设置配置项 ==========
 config.set_bot_uin("123456")  # 设置 bot qq 号 (必填)
 config.set_root("123456")  # 设置 bot 超级管理员账号 (建议填写)
-config.set_ws_uri("ws://localhost:3001")  # 设置 napcat websocket server 地址
-config.set_token("")  # 设置 token (napcat 服务器的 token)
 
 # ========== 创建 BotClient ==========
 bot = BotClient()
@@ -728,12 +759,10 @@ from ncatbot.utils.logger import get_log
 # ========== 设置配置项 ==========
 config.set_bot_uin("123456")  # 设置 bot qq 号 (必填)
 config.set_root("123456")  # 设置 bot 超级管理员账号 (建议填写)
-config.set_ws_uri("ws://localhost:3001")  # 设置 napcat websocket server 地址
-config.set_token("")  # 设置 token (napcat 服务器的 token)
 ```
 :::
 
-请参阅[配置项](../2.%20配置项.md)
+请参阅[配置项](../2.%20配置项.md).
 
 ### 创建 bot 实例
 
@@ -743,6 +772,11 @@ config.set_token("")  # 设置 token (napcat 服务器的 token)
 # ========== 创建 bot 实例 ==========
 bot = BotClient() # 创建一个 BotClient 实例
 ```
+:::
+
+
+::: warning
+NcatBot 要求, 一个独立的**进程**只能==创建唯一一个 BotClient 实例==.
 :::
 
 ### 注册回调函数
@@ -827,7 +861,7 @@ NcatBot 的生命周期按照时间顺序分为以下几步:
 1. 导入必要的模块
 2. 设置配置项
 3. 创建 BotClient 实例
-   1. 检查配置项是否合法.
+   1. 检查配置项是否合法, 检查是否已经创建过 BotClient 实例.
    2. 初始化 BotAPI.
    3. 初始化事件总线和内置功能.
    4. 加载功能注册钩子.
@@ -893,48 +927,81 @@ permalink: /guide/kfcvme50/
 
 本文介绍 NcatBot 的各个配置项和配置项的指定方式.
 
+NcatBot 的配置项通过位于 `ncatbot.utils.config` 中的全局变量 `config` 来保存和指定. 同时也提供了在运行时指定的快速方法.
+
 ## 配置项列表
 
-::: code-tabs
-@tab yaml
+以下给出了所有的配置项及其默认值:
 
-```yaml
-bt_uin: "123456" # 机器人 qq 号
-root: "123456" # 超级管理员账号
-token: "" # token, 默认为 ""(空字符串)
-ws_uri: ws://127.0.0.1:3001 # websocket server 地址, 默认为 ws://127.0.0.1:3001(本机 3001 端口)
+```python
+
+# 常用配置项
+root = "123456"  # root 账号
+bt_uin = "123456"  # bot 账号
+ws_uri = "ws://localhost:3001"  # ws 地址
+webui_uri = "http://localhost:6099"  # webui 地址
+webui_token = "napcat"  # webui 令牌
+ws_token = ""  # ws_uri 令牌
+
+# 更新检查
+check_napcat_update = False  # 是否检查 napcat 更新
+check_ncatbot_update = True  # 是否检查 ncatbot 更新
+
+# 开发者调试
+debug = False  # 是否开启调试模式(暂时不支持调试模式)
+skip_ncatbot_install_check = False  # 是否跳过 napcat 安装检查
+skip_plugin_load = False  # 是否跳过插件加载
+skip_account_check = False  # 是否跳过账号一致性检查
+
+# NapCat 行为
+stop_napcat = False  # NcatBot 下线时是否停止 NapCat
 ```
-:::
 
 - `bot_uin`: 就是 **Bot** QQ 号. 这个千万不能填错了喵~
 - `root`: **root** QQ 号, 具有超管权限, 一般填你的 QQ 大号.
 - `ws_uri`: NapCat WebSocket 地址. 一般不用改喵.
-- `token`: NapCat 服务器的 token. 一般也不用改喵.
+- `ws_token`: NapCat 服务器的 token. 一般也不用改喵.
+- `webui_uri`: NapCat WebUI 的地址. 一般还是不用改喵.
+- `webui_token`: NapCat WebUI 的 token. 一般仍然是不用改喵.
 
-需要改动 `ws_uri` 和 `token` 的情况是 [使用远端 NapCat 接口](../5.%20杂项/2.%20使用远端%20napcat%20接口.md).
+一般来说除了 `root` 和 `bt_uin` 需要指定外, 其它配置项推荐使用默认值.
+
+需要改动 `ws_uri`、 `ws_token`、 `webui_uri` 和 `webui_token` 的情况是 [使用远端 NapCat 接口](../5.%20杂项/2.%20使用远端%20napcat%20接口.md).
 
 ## 在代码里指定配置项(推荐)
 
-配置项的指定方式如下:
-
-::: code-tabs
-@tab python
+部分常用配置项可以在代码里直接指定.
 
 ```python
 from ncatbot.utils.config import config
 
-config.set_ws_uri("ws://127.0.0.1:3001")
-config.set_bt_uin("123456")
-config.set_root("123456")
-config.set_token("your token")
+config.set_bot_uin("123456")  # 设置 bot qq 号 (必填)
+config.set_root("123456")  # 设置 bot 超级管理员账号 (建议填写)
+config.set_ws_uri("ws://localhost:3001")  # 设置 napcat websocket server 地址
+config.set_ws_token("")  # 设置 token (websocket 的 token)
+config.set_webui_uri("http://localhost:6099")  # 设置 napcat webui 地址
+config.set_webui_token("napcat")  # 设置 token (webui 的 token)
 ```
 
-:::
+## 通过 `BotClient.run` 运行时指定
 
-## 通过文件指定配置项
+引导程序中, 在 `bot.run()` 时可以添加命名参数来指定大部分配置项, 例如:
+
+```python
+bot.run(
+    ws_uri="ws://127.0.0.1:3001",
+    ws_token="",
+    webui_uri="http://127.0.0.1:6099",
+    webui_token="napcat",
+    check_napcat_update = False, # 不检查 NapCat 更新
+    check_ncatbot_update = True, # 检查 NcatBot 更新
+)
+```
+
+## 通过文件指定配置项(弃用)
 
 ::: warning
-这个功能可能有 bug, 请使用第一种方式指定配置项.
+这个功能目前弃用, 未来可能继续提供支持.
 :::
 
 也可以用文件来指定配置项, 用文件指定配置项时, 配置文件的后缀名必须为 yaml. 且==任何一项均不能缺省==.
@@ -971,11 +1038,9 @@ config.set_root("123456")
 
 - `root` ==超级管理员账号==, 建议填写.
 
-- 上面的代码注释了 `ws_uri` 和 `token`, 也就是这两个项可以缺省, 此时将使用默认值.
+- 上面的代码注释了 `ws_uri` 和 `ws_token`, 也就是这两个项可以缺省, 此时将使用默认值.
 
 ## 指定配置项的时机
-
-
 
 由于我们采用==全局变量==的方式来保存配置项, 所以无论使用哪种方式, 都只需要在代码里指定一次即可.
 
@@ -1126,35 +1191,186 @@ async def on_group_message(msg: GroupMessage):
 ```
 :::
 
+下面给出简介, 详细信息移步[解析消息](3.%20解析消息.md)
+
 `msg` 是一个 `BaseMessage` 的派生类, 其成员均符合 [OneBot11 标准](https://github.com/botuniverse/onebot-11).
 
-`msg` 的成员表如下, 有关成员含义的更详细的信息可以参考 [OneBot11 消息事件](https://github.com/botuniverse/onebot-11/blob/d4456ee706f9ada9c2dfde56a2bcfc69752600e4/event/message.md):
+`msg` 的主要成员表如下, 有关成员含义的更详细的信息可以参考 [OneBot11 消息事件](https://github.com/botuniverse/onebot-11/blob/d4456ee706f9ada9c2dfde56a2bcfc69752600e4/event/message.md):
 
 - `msg.user_id: Union(str, int)`:  消息发送者 QQ 号.
 - `msg.group_id: Union(str, int)`:  消息来源群群号(如果是群聊消息).
 - `msg.message_id: Union(str, int)`:  消息 ID.
-- `msg.message_seq: Union(str, int)`:  同上.
-- `msg.real_id: Union(str, int)`: 同上.
-- `msg.message_type: str`:  消息类型(`group`/`private`).
-- `msg.sub_type: str`:  消息子类型(`friend`, `group`, `other`).
+- `msg.message_type: str`:  消息类型(`group`/`private`), 群聊或私聊
 - `msg.raw_message: str`: 符合 OneBot11 标准的==消息字符串==, 需手动解析, 不建议使用.
-- `msg.sender: Sender`:  消息发送者资料.
-- `msg.message: List[dict]`: 符合 OneBot11 标准的==数组格式消息==, 推荐使用它来进行逻辑判断.
-- `msg.message_format: str`:  消息格式(`string`/`json`/`markdown`).
+- `msg.sender: Sender`:  消息发送者资料, 详细信息参考[解析消息](3.%20解析消息.md).
+- `msg.message: List[dict]`: 符合 OneBot11 标准的==数组格式消息==, 推荐使用它来进行逻辑判断. 详细信息参考[解析消息](3.%20解析消息.md).
 - `msg.self_id: Union(str, int)`: 机器人 QQ 号.
-- `msg.post_type: str`:  事件类型(`message`/`notice`/`request`).
 - `msg.time: int`: 事件发生时间戳.
 
-常用参考资料:
+常用其它参考资料:
 
 - [OneBot11 消息段](https://github.com/botuniverse/onebot-11/blob/d4456ee706f9ada9c2dfde56a2bcfc69752600e4/message/segment.md)
 - [OneBot11 数组格式消息](https://github.com/botuniverse/onebot-11/blob/d4456ee706f9ada9c2dfde56a2bcfc69752600e4/message/array.md)
+- [NapCat 消息事件](https://napneko.github.io/develop/event#message-%E4%BA%8B%E4%BB%B6)
+
+
 
 ### Notice 类型回调函数参数
 
 `msg` 是一个 `dict`, 支持的操作见 [NapCat 文档](https://napneko.github.io/develop/event#notice-%E4%BA%8B%E4%BB%B6).
 
 以下给出几个常见的事件:
+
+#### 私聊消息撤回
+
+参数示例及其解释:
+
+```python
+msg = {
+    "time": 1743865655, # UNIX 时间戳
+    "self_id": 1550507358, # 机器人 QQ 号
+    "post_type": "notice", # 通知类型, 通知类型固定为 `notice`
+    "notice_type": "friend_recall", # 通知类型, 消息撤回固定为 `friend_recall`
+    "user_id": 3051561876, # 撤回者 QQ 号
+    "message_id": 680308254 # 撤回的消息 ID
+}
+```
+
+#### 头像双击动作
+
+参数示例及其解释:
+
+```python
+msg = {
+    "time": 1743865776, # UNIX 时间戳
+    "self_id": 1550507358, # 机器人 QQ 号
+    "post_type": "notice", # 通知类型, 通知类型固定为 `notice`
+    "notice_type": "poke", # 通知类型, 头像双击动作固定为 `poke`
+    "sub_type": "double", # 事件子类型, 头像双击动作固定为 `double`
+    "target_id": 1550507358, # 被双击的 QQ 号
+    "user_id": 3051561876, # 操作者 QQ 号
+    "raw_info": [
+        {'col': '1', 'nm': '', 'type': 'qq', 'uid': 'u_-ev35gBX6zud3K0yA_nskA'},  # 发送者的 QQ 链接
+        {'jp': 'https://zb.vip.qq.com/v2/pages/nudgeMall?_wv=2&actionId=0', 'src': 'http://tianquan.gtimg.cn/nudgeaction/item/0/expression.jpg', 'type': 'img'},  # 图标
+        {'txt': '戳了戳', 'type': 'nor'},  # 文本
+        {'col': '1', 'nm': '', 'tp': '0', 'type': 'qq', 'uid': 'u_sbV_ToZLelyJ73PGan2F-A'}, # 操作者的 QQ 链接
+        {'txt': '', 'type': 'nor'} # 我不知道这是啥
+    ], 
+    'sender_id': 3051561876
+}
+```
+
+#### 私聊输入状态更新
+
+参数示例及其解释:
+
+[2025-04-05 23:16:53,622.622] DEBUG    [Thread-3|MainProcess] Logger (client.py:handle_notice_event:95) | {'time': 1743866213, 'self_id': 1550507358, 'post_type': 'notice', 'notice_type': 'notify', 'sub_type': 'input_status', 'status_text': '对方正在输入...', 'event_type': 2, 'user_id': 3051561876, 'group_id': 0}
+
+
+```python
+msg = {
+    "time": 1743866213, # UNIX 时间戳
+    "self_id": 1550507358, # 机器人 QQ 号
+    "post_type": "notice", # 通知类型, 通知类型固定为 `notice`
+    "notice_type": "notify", # 通知类型, 输入状态更新固定为 `notify`
+    "sub_type": "input_status", # 事件子类型, 输入状态更新固定为 `input_status`
+    "status_text": "对方正在输入...", # 输入状态文本
+    "event_type": 2, # 输入状态类型, 1 为开始输入, 2 为继续输入
+    "user_id": 3051561876, # 操作者 QQ 号
+    "group_id": 0 # 群号
+}
+```
+
+#### 群成员增加
+
+参数示例及其解释:
+
+```python
+msg = {
+    "time": 1609478707, # UNIX 时间戳
+    "self_id": 123456789, # 机器人 QQ 号
+    "post_type": "notice", # 通知类型, 通知类型固定为 `notice`
+    "notice_type": "group_increase", # 通知类型, 加群通知固定为 `group_increase`
+    "sub_type": "approve", # 事件子类型, 管理员同意为 `approve`, 管理员邀请为 `invite`
+    "group_id": 123456789, # 群号
+    "operator_id": 987654321, # 操作者 QQ 号
+    "user_id": 987654321, # 加入者 QQ 号
+}
+```
+
+#### 群成员减少
+
+参数示例及其解释:
+
+```python
+msg = {
+    "time": 1609478707, # UNIX 时间戳
+    "self_id": 123456789, # 机器人 QQ 号
+    "post_type": "notice", # 通知类型, 通知类型固定为 `notice`
+    "notice_type": "group_decrease", # 通知类型, 群成员减少固定为 `group_decrease`
+    "sub_type": "leave", # 事件子类型, 主动退群为 `leave`, 被踢为 `kick`, 登录号被踢为 `kick_me`
+    "group_id": 123456789, # 群号
+    "operator_id": 987654321, # 操作者 QQ 号
+    "user_id": 987654321, # 离开者 QQ 号
+}
+```
+
+#### 禁言相关
+
+
+参数示例及其解释:
+
+```python
+msg = {
+    "time": 1609478707, # UNIX 时间戳
+    "self_id": 123456789, # 机器人 QQ 号
+    "post_type": "notice", # 通知类型, 通知类型固定为 `notice`
+    "notice_type": "group_ban", # 通知类型, 群禁言固定为 `group_ban`
+    "sub_type": "ban", # 事件子类型, 群禁言固定为 `ban`, 解除禁言固定为 `lift_ban`
+    "group_id": 123456789, # 群号
+    "operator_id": 987654321, # 操作者 QQ 号
+    "user_id": 987654321, # 被禁言 QQ 号
+    "duration": 300 # 禁言时长, 单位秒
+}
+```
+
+#### 群文件上传
+
+传入的参数示例及其解释:
+
+```python
+msg = {
+    "time": 1743864886, # UNIX 时间戳
+    "self_id": 1550507358, # 机器人 QQ 号
+    "post_type": "notice", # 通知类型, 通知类型固定为 `notice`
+    "group_id": 701784439, # 群号
+    "user_id": 3051561876, # 上传者 QQ 号
+    "file": {
+        "id": "24f852ab9a17d7d5dc790b9262092189", # 文件 ID
+        "name": "文件名", # 文件名
+        "size": 114514, # 文件大小
+        "busid": 114 # 文件 busid
+    }
+}
+```
+
+#### 群消息撤回
+
+
+传入的参数示例及其解释:
+
+```python
+msg = {
+    "time": 1743865071, # UNIX 时间戳
+    "self_id": 1550507358, # 机器人 QQ 号
+    "post_type": "notice", # 通知类型, 通知类型固定为 `notice`
+    "group_id": 701784439, # 群号
+    "user_id": 3051561876, # 撤回消息发送者 QQ 号
+    "notice_type": "group_recall" # 通知类型, 撤回消息固定为 `group_recall`
+    "operator_id": 3051561876, # 操作者 QQ 号
+    "message_id": 364573752 # 撤回的消息 ID
+}
+```
 
 
 ### Request 类型回调函数参数
@@ -1163,6 +1379,38 @@ async def on_group_message(msg: GroupMessage):
 
 以下给出几个常见的事件:
 
+#### 加群申请
+
+传入的参数示例及其解释:
+
+```python
+msg = {
+    "time": 1609478707, # UNIX 时间戳
+    "self_id": 123456789, # 机器人 QQ 号
+    "post_type": "request", # 请求类型, 请求类型固定为 `request`
+    "request_type": "group", # 请求类型, 加群申请固定为 `group`
+    "sub_type": "add", # 子类型, 支持 `add` 和 `invite`, 前者是主动添加, 后者是接受邀请
+    "user_id": 987654321, # 申请加群的人的 QQ 号
+    "comment": "你好", # 验证信息
+    "flag": "1234567890" # flag, 通过请求时应该提供
+}
+```
+
+#### 加好友申请
+
+传入的参数示例及其解释:
+
+```python
+msg = {
+    "time": 1609478707, # UNIX 时间戳
+    "self_id": 123456789, # 机器人 QQ 号
+    "post_type": "request", # 请求类型, 请求类型固定为 `request`
+    "request_type": "friend", # 请求类型, 加好友申请固定为 `friend`
+    "user_id": 987654321, # 申请加好友的人的 QQ 号
+    "comment": "你好", # 验证信息
+    "flag": "1234567890" # flag, 通过请求时应该提供
+}
+```
 
 ---
 title: 事件上报
@@ -1332,31 +1580,289 @@ async def handle_notice_event(self, msg: dict):
 参阅[事件的发布和订阅](../6.%20开发%20NcatBot%20插件/3.%20插件的交互系统/3.1%20事件的发布和订阅.md)
 
 ---
+title: 解析消息
+createTime: 2025/04/05 23:21:39
+permalink: /guide/parsemsg/
+---
+
+## 消息类
+
+此类型包括==群聊消息==和==私聊消息==.
+
+群聊消息类为 `GroupMessage` 类, 私聊消息类为 `PrivateMessage` 类, 它们均为 `BaseMessage` 的派生类. 下面只介绍 `BaseMessage` 类.
+
+我们称 `BaseMessage` 实例为**消息**.
+
+三个类的具体代码位置为 `ncatbot.core.message`.
+
+[查看简介](1.%20回调函数.md#Message%20类型回调函数参数).
+
+## 内置方法
+
+咕咕咕, 未来将提供支持...
+
+## sender 成员
+
+`BaseMessage` 类的 `sender` 成员为 `Sender` 类, `Sender` 类包含以下成员:
+
+```python
+sender.user_id = "123456" # 消息发送者 QQ 号.
+sender.nickname = "昵称" # 消息发送者 QQ 昵称.
+sender.card = "群昵称" # 消息发送者群卡片昵称(如果是群聊消息).
+```    
+
+## message 成员
+
+`BaseMessage.message` 是一个字典的列表(`list[dict]`), 它是符合 OneBot11 标准的==[数组格式消息](https://github.com/botuniverse/onebot-11/blob/d4456ee706f9ada9c2dfde56a2bcfc69752600e4/message/array.md)==.
+
+我们称 `list[dict]` 为**消息段列表**, 称 `dict` 为**消息段**.
+
+消息段有不同种类, 具体如下:
+
+### forward 类型消息
+
+`forward` 类型的消息段表示一个转发消息.
+
+`forward` 类型消息如果作为**消息段**出现, 那么该消息段所在**消息段列表**一定只有一个成员.
+
+一般有两种格式.
+
+#### 消息 ID 格式
+
+```python
+msg.message = [{'type': 'forward', 'data': {'id': '7489856252632721587'}}]
+```
+
+这个很长的 `id` 字段没有用, 如果要获取转发消息的内容, 必须使用 message 成员的 `message_id` 字段和 [get_msg 方法]() 可以获取到消息的详细信息, 获取的数据如下, 提取 `result["message"]` 得到的结果定义为 **content** 格式的.
+ **forward** 类型消息.
+
+```python
+result = {
+    # 其它字段略去, 只关注 'message' 字段, 由于该类型是 `forward` 类型, 所以消息段列表 `message` 只有它一个成员.
+    'message': [
+        {
+            'type': 'forward', 
+            'data': {
+                'id': '7489858069394438109', 
+                'content': [
+                    # 格式参考下面
+                ]
+            }
+        }
+    ]
+}
+```
+
+
+#### content 格式
+
+::: warning
+请保证自己语文及格再阅读以下说明, 包含多重定语和多重定义, 容易引起混淆.
+:::
+
+格式如下:
+
+```python
+msg.message = [
+    {
+        'type': 'forward', 
+        'data': {
+            'id': '7489858069394438109', 
+            'content': [
+                {
+                        'self_id': 1550507358,
+                        'user_id': 3051561876, 
+                        'time': 1743869088, 
+                        'message_id': 671936880, 
+                        'message_seq': 671936880, 
+                        'real_id': 671936880, 
+                        'real_seq': '0', 
+                        'message_type': 'private', 
+                        'sender': {'user_id': 3051561876, 'nickname': '幻影彭', 'card': ''}, 'raw_message': '123456', 
+                        'font': 14, 
+                        'sub_type': 'friend', 
+                        'message': [{'type': 'text', 'data': {'text': '123456'}}], 
+                        'message_format': 'array', 
+                        'post_type': 'message'
+                    }, {
+                         'message': [{'type': 'text', 'data': {'text': '666666'}}]
+                    }, {
+                        'message': [{'type': 'text', 'data': {'text': '测试'}}],
+                    }
+            ]
+        }
+    }
+]
+```
+
+一段 content 格式消息是一个 `list[dict]`, `dict` 表示一个**消息**(不是**消息段**), 这个 `dict` 的结构和 `BaseMessage.__dict__` 基本一致, content 格式消息的本质是**消息列表**.
+
+**消息列表**->**消息**->**消息段列表**->**消息段**
+
+而消息段又可以是 content 格式的 forward 类型的消息段, 这种**消息段**本质是**消息列表**, 所以说, 这里的定义是**递归的**.
+
+上面的示例省略了消息列表中后两条消息的其它数据, 只保留了 `message` 字段. 可以对比一下一条消息的 key 以及 `BaseMessage` 的 成员列表.
+
+注意, 这里的消息段所带的 `data.content` 里面也可以包含带有 forward 类型的消息段的消息, 这和 forward 作为消息段列表中的唯一元素不矛盾, 因为 `data.content` 本质是**消息列表**, 而不是**消息段列表**. 但是一条**消息**所带的**消息段列表**中, 如果出现了 `forward` 类型的消息段, 那么该消息段就是唯一的消息段.
+
+### 组合类型消息
+
+不包含 `forward` 类型**消息段**时, 统称组合类型消息.
+
+组合类型消息是一个**消息段列表**, 列表中的每个消息**有序**.
+
+组合类型消息包含以下几种类型的组合.
+
+#### text 类型消息
+
+```python
+msg.message = [
+    {
+        'type': 'text', 
+        'data': {
+            'text': '123456'
+        }
+    }
+]
+```
+
+#### at 类型消息
+
+```python
+msg.message = [
+    {
+        'type': 'at', 
+        'data': {
+            'qq': 3051561876
+        }
+    }
+]
+```
+
+当 `qq` 字段为 `all` 时, 表示@全体成员.
+
+#### reply 类型消息
+
+```python
+msg.message = [
+    {
+        'type': 'reply', 
+        'data': {
+            'id': '671936880', # 表示所回复的消息的 id
+        }
+    }
+]
+```
+
+当包含 `reply` 类型消息段时, `reply` 消息段一定位于消息段列表的第一个位置.
+
+#### face 类型消息
+
+```python
+msg.message = [
+    {
+        'type': 'face', 
+        'data': {
+            'id': 277 # 表示表情的 id
+            'raw': {
+                'faceIndex': 277, # 表情 id
+                'faceText': '[汪汪]',  # 表情描述文本
+                'faceType': 2 # 表情类型, 其实我也不知道什么意思
+            }
+        }
+    }
+]
+```
+
+#### image 类型消息
+
+```python
+msg.message = [{
+    'type': 'image', 
+    'data': {
+        'file': '17F7844DD051F03B0CF2198CAAD887A0.jpg' # 文件名, 几乎没用
+        'url': 'http://example.com/fndsnajfasndkgjnasjk.jpg' # 图片下载链接, 很重要
+        'summary': '[图片]'
+    }
+}]
+```
+
+#### video 类型消息
+
+```python
+msg.message = [{
+    'type': 'video', 
+    'data': {
+        'file': '17F7844DD051F03B0CF2198CAAD887A0.mp4' # 文件名, 几乎没用
+        'url': 'http://example.com/fndsnajfasndkgjnasjk' # 视频间接下载链接, 无法直接下载, 也无法直接使用
+        'summary': '[视频]'
+    }
+}]
+```
+        
+视频目前只能通过 `url` 下载源文件后**手动修改后缀名为 `.mp4`**后查看, 未来将实现自动修改和识别.
+
+#### file 类型消息
+
+```python
+msg.message = [
+    {
+        'type': 'file', 
+        'data': {
+            'file': '0d7520ca-4b60-4fcd-a87b-581f69da3540.mp4', # 文件名, 几乎没用
+            'file_id': '9423e3b5f95b09df4de35ea1c783c368_feec4190-1243-11f0-bf38-8307ae91f46d', # 文件 id, 很有用
+            'file_size': '1177324' # 文件大小, 几乎没用
+        }
+    }
+]
+```
+
+通过 `file_id` 可以获取更加细节的文件信息, 接口为 [get_file]().
+
+
+## 其它成员
+
+- `msg.sub_type: str`:  消息子类型(`friend`, `group`, `other`).
+- `msg.sub_type: str`:  消息子类型(`friend`, `group`, `other`).
+- `msg.message_format: str`:  消息格式(`string`/`json`/`markdown`), 作用不明
+- `msg.raw_message: str`: 符合 OneBot11 标准的==消息字符串==, 需手动解析, 不建议使用.
+
+## 参考资料
+
+- [OneBot11 消息段](https://github.com/botuniverse/onebot-11/blob/d4456ee706f9ada9c2dfde56a2bcfc69752600e4/message/segment.md)
+- [OneBot11 数组格式消息](https://github.com/botuniverse/onebot-11/blob/d4456ee706f9ada9c2dfde56a2bcfc69752600e4/message/array.md)
+
+---
 title: API 调用
 createTime: 2025/01/23 20:00:05
 permalink: /guide/p8aun9nh/
 ---
 
-# NCATBOT 的 API 全部都是==异步函数==
+NcatBot 推荐使用异步 API, 但从 3.7.0 版本起, 所有 API 均已经提供同步支持.
 
 ==[典型反应](https://github.com/liyihao1110/ncatbot/discussions/46)==
 
+::: tip
+如果你此前未了解异步, 可以先使用同步方法, 过程中逐渐学习异步.
+:::
+
 ### 介绍
 
-NcatBot 提供==异步==的 API 调用, 用于完成各种操作.
+NcatBot 提供 API 调用, 用于完成各种操作.
 
 提供 API 的类是 `BotAPI`. `BotClient` 类的成员 `api`, 也就是示例代码中的 `bot.api`, 就是一个 `BotAPI` 实例.
 
-同步的 API 调用将在未来版本中提供.
 
 ### 调用 API 接口
 
-在回调函数中, **异步调用** `bot.api` 的成员方法即可完成回复.
+在回调函数中, 调用 `bot.api` 的成员方法即可完成回复.
 
-注意, `bot.api` 的所有成员方法都是**异步**的, 调用时==必须加上 `await` 关键字==.
+注意, 当使用 `bot.api` 中的异步方法, 调用时==必须加上 `await` 关键字==.
+
+所有的同步方法均以 `xxx_sync()` 结尾, 如果一个方法的异步版本是 `bot.api.xxx()`, 那么异步版本的函数名是 `bot.api.xxx_async()`. 典例是 `post_group_msg()` 和 `post_group_msg_sync()`.
 
 ::: warning
-任何形如 `bot.api.xxx()` 的调用都是错误用法, 只有 `await bot.api.xxx()` 才是正确用法.
+任何形如 `bot.api.xxx()` 的调用都是错误用法, 只有 `await bot.api.xxx()` 或者 `bot.api.xxx_sync()` 才是正确用法.
 :::
 
 ::: code-tabs
@@ -1367,7 +1873,8 @@ NcatBot 提供==异步==的 API 调用, 用于完成各种操作.
 async def on_private_message(msg: PrivateMessage):
     _log.info(msg)
     if msg.raw_message == '测试':
-        await bot.api.post_private_msg(msg.user_id, text="NcatBot 测试成功喵~")
+        await bot.api.post_private_msg(msg.user_id, text="NcatBot 异步调用测试成功喵~")
+        bot.api.post_private_msg_sync(msg.user_id, text="NcatBot 同步调用测试成功喵~")
 ```
 :::
 
@@ -1402,15 +1909,15 @@ async def on_private_message(msg: PrivateMessage):
 
 `bot.api` 还有其它成员方法, 用于完成其它类型的操作, 例如加群审核等, 请参考 [主要 API 及其使用](../4.%20API%20参考/2.%20主要%20API%20及其使用.md) 和 [其它 API 及其使用](../4.%20API%20参考/3.%20其它%20API%20介绍.md.md)
 
+### 同步回调函数
 
+3.7.0 版本后, 大部分回调函数可以被定义为同步回调函数, 同步回调函数中**禁止调用异步 API**.
 
 ---
 title:  主要 API 及其使用
 createTime: 2025/02/09 15:22:54
 permalink: /guide/f34xj8pk/
 ---
-
-# NCATBOT 的 API 全部都是==异步函数==
 
 ## 发送消息
 
@@ -1666,7 +2173,11 @@ await msg.reply(face=123, at=1234567)
 
 ## 上传文件
 
-### 函数原型
+由于 NapCat 的一些原因, 发送视频建议以上传文件的形式进行.
+
+### 通过文件消息发送
+
+#### 函数原型
 
 ::: details 点击显示函数原型
 ```python
@@ -1700,16 +2211,191 @@ async def post_group_file(
 ```
 :::
 
-### 参数
+#### 参数
 
 `image`, `video`, `record`, `file`, `markdown` **五个参数只能选一个不为 `None`**.
 
 - `image`: 支持本地路径(只建议==绝对路径==), URL, Base64 编码.
 - `video`: 支持本地路径(只建议==绝对路径==), URL.
-- `record`: 只支持本地路径(只建议==绝对路径==).
-- `file`: 只支持本地路径(只建议==绝对路径==).
+- `record`: 支持本地路径(只建议==绝对路径==), URL.
+- `file`: 支持本地路径(只建议==绝对路径==), URL.
 - `markdown`: 暂未支持.
 
+
+### 通过专用上传接口发送
+
+一般来说私聊文件会直接法文件消息, 群文件需要指定上传到固定文件夹时可用这个接口.
+
+专用接口为 `upload_group_file`.
+
+#### 函数原型
+
+```python
+async def upload_group_file(
+    self, group_id: Union[int, str], file: str, name: str, folder_id: str
+):
+    """
+    :param group_id: 群号
+    :param file: 文件路径
+    :param name: 文件名
+    :param folder_id: 文件夹ID
+    :return: 上传群文件
+    """
+    return await self._http.post(
+        "/upload_group_file",
+        {"group_id": group_id, "file": file, "name": name, "folder_id": folder_id},
+    )
+```
+
+#### 参数
+
+- `group_id`: 群号.
+- `file`: 文件路径, 支持本地绝对路径或者 URL.
+- `name`: 文件名.
+- `folder_id`: 文件夹 ID, 参考[这里](#get_group_root_files)可获取.
+
+
+## 获取文件
+
+文件消息中一般不提供文件的下载链接, 需要通过 `get_file` 方法传入 `file_id` 来请求下载链接, 也就是说, 获取文件的前提获取 `file_id`. 
+
+### 通过 `file_id` 获取文件下载链接
+
+使用 `get_file` 方法传入 `file_id` 即可获取消息的详细信息.
+
+[函数原型](2.%20主要%20API%20及其使用.md#消息接口)参考.
+
+返回值是一个 `dict` 类型, 示例如下:
+
+```python
+result = {
+  "status": "ok",
+  "retcode": 0,
+  "data": {
+    "file": "D:\\TencentFiles\\NapCat\\temp\\9f22cb6d-8d62-4323-9b78-60621533e466 (1).txt", # 没啥用
+    "url": "D:\\TencentFiles\\NapCat\\temp\\9f22cb6d-8d62-4323-9b78-60621533e466 (1).txt", # url 可能是一个本地地址也可能是一个网络地址
+    "file_size": "35",
+    "file_name": "9f22cb6d-8d62-4323-9b78-60621533e466.txt"
+    },
+}
+```
+
+### 文件直接被发送
+
+参考[解析消息](../3.%20事件处理/3.%20解析消息.md#file%20类型消息)来获取一条消息中的 `file_id`.
+
+### 已知文件位于某个群的群文件
+
+通过 `get_group_root_files` 获取群文件根目录列表. 通过 `get_group_files_by_folder` 获取某个目录的列表.
+
+如果文件位于根目录, 那么 `get_group_root_files` 的返回值的 `data` 中会带有对应的 `file_name` 和 `file_id`. 如果文件位于某个子目录, 那么 `get_group_files_by_folder` 的返回值的 `data` 中会带有对应的 `file_name` 和 `file_id`.
+
+不知道文件位于哪个目录时, 可以通过以上两个函数来遍历获取.
+
+#### get_group_root_files
+
+返回指定群聊, 群文件根目录下所有文件和目录的信息.
+
+::: details 返回值示例:
+```python
+result = {
+  "status": "ok",
+  "retcode": 0,
+  "data": {
+    "files": [
+      {
+        "group_id": 0,
+        "file_id": "string",
+        "file_name": "string",
+        "busid": 0,
+        "size": 0,
+        "upload_time": 0,
+        "dead_time": 0,
+        "modify_time": 0,
+        "download_times": 0,
+        "uploader": 0,
+        "uploader_name": "string"
+      }
+    ],
+    "folders": [
+      {
+        "group_id": 0,
+        "folder_id": "string",
+        "folder": "string",
+        "folder_name": "string",
+        "create_time": "string",
+        "creator": "string",
+        "creator_name": "string",
+        "total_file_count": "string"
+      }
+    ]
+  },
+  "message": "string",
+  "wording": "string",
+  "echo": "string"
+}
+```
+:::
+
+#### get_group_files_by_folder
+
+返回指定目录所有文件和目录的信息.
+
+::: details 返回值示例:
+```python
+{
+  "status": "ok",
+  "retcode": 0,
+  "data": {
+    "files": [
+      {
+        "group_id": 0,
+        "file_id": "string",
+        "file_name": "string",
+        "busid": 0,
+        "size": 0,
+        "upload_time": 0,
+        "dead_time": 0,
+        "modify_time": 0,
+        "download_times": 0,
+        "uploader": 0,
+        "uploader_name": "string"
+      }
+    ],
+    "folders": [
+      {
+        "group_id": 0,
+        "folder_id": "string",
+        "folder": "string",
+        "folder_name": "string",
+        "create_time": "string",
+        "creator": "string",
+        "creator_name": "string",
+        "total_file_count": "string"
+      }
+    ]
+  },
+  "message": "string",
+  "wording": "string",
+  "echo": "string"
+}
+```
+:::
+
+### 示例
+
+收到群文件时输出下载链接
+
+```python
+@bot.group_event()
+def on_group_msg(msg: GroupMessage):
+  message_segs = msg.message
+  for message_seg in message_segs:
+    if message_seg['type'] == "file":
+      file_id = message_seg["data"]["file_id"]
+      url = bot.api.get_file_sync(file_id)['data']['url']
+      print("文件的获取链接是:", url)
+```
 
 ---
 title: 其它 API 介绍
@@ -1767,7 +2453,7 @@ permalink: /guide/2dsviohi/
 
 - `nickname`: 昵称.
 - `personal_note`: 个性签名.
-- `sex`: 性别.
+- `sex`: 性别, 字面量 `男` / `女` 之一.
 - 返回: 一个 `dict` 表示请求响应结果.
 
 示例调用: `bot.api.set_qq_profile("彭彭", "咱好想和木子姐姐贴贴啊喵qwq", "猫猫")`.
@@ -3856,7 +4542,10 @@ apt-get install sudo
 
 先 Ctrl+C 退出程序, 再执行 `python3 main.py` 重新运行。
 
+###
 
+Windows 已保护你的电脑
+Microsoft Defender SmartScreen 阻止了无法识别的应用启动。运行此应用可能会导致你的电脑存在风险。
 
 ---
 title:  运行时常见问题
@@ -3894,7 +4583,7 @@ bot = BotClient()
 async def on_group_message(msg:GroupMessage):
     group_uin = 12345678 # 指定群聊的账号
     if msg.group_id == group_uin and msg.raw_message == "你好":
-        await bot._bot.post_group_msg(msg.group_id, text="你好呀，有什么需要我帮忙的吗？")
+        await bot.api.post_group_msg(msg.group_id, text="你好呀，有什么需要我帮忙的吗？")
 
 bot.run()
 ```
@@ -3915,7 +4604,7 @@ async def on_group_message(msg:GroupMessage):
     group_uin = 12345678 # 指定群聊的账号
     user_uin = 987654321# 指定用户的账号
     if msg.group_id == group_uin and msg.user_id == user_uin and msg.raw_message == "你好":
-        await bot._api.post_group_file(group_id=group_uin, image="https://gitee.com/li-yihao0328/nc_bot/raw/master/logo.png")# 文件路径支持本地绝对路径，相对路径，网址以及base64
+        await bot.api.post_group_file(group_id=group_uin, image="https://gitee.com/li-yihao0328/nc_bot/raw/master/logo.png")# 文件路径支持本地绝对路径，相对路径，网址以及base64
 
 bot.run()
 ```
@@ -4073,7 +4762,7 @@ permalink: /guide/zaobaplg/
 ### 源代码
 
 ```python
-from ncatbot.plugin.loader import BasePlugin, CompatibleEnrollment
+from ncatbot.plugin import BasePlugin, CompatibleEnrollment
 
 import datetime
 
