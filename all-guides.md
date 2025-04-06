@@ -3683,8 +3683,8 @@ permalink: /guide/embeddev/
 from ncatbot.core import BotClient
 
 bot = BotClient()
-api = bot.run_blocking(bt_uin="1550507358", root="3051561876") # 启动 NcatBot, NcatBot 接口可用时返回 API 实例
-api.post_private_msg_sync(3051561876, "你好") # 此时 NcatBot 已经启动完成, 可以正常使用接口
+api = bot.run_blocking(bt_uin="123456", root="1234567") # 启动 NcatBot, NcatBot 接口可用时返回 API 实例
+api.post_private_msg_sync(12345678, "你好") # 此时 NcatBot 已经启动完成, 可以正常使用接口
 bot.exit()
 print("退出")
 ```
@@ -3710,8 +3710,6 @@ from ncatbot.core import BotClient
 
 bot = BotClient()
 bot.run_none_blocking(bt_uin="123456", root="123456") # 在这里指定 QQ 运行参数, 可以替代全局变量 config
-
-api = bot.run_none_blocking() # 以非阻塞模式启动 NcatBot
 time.sleep(10) # 等待 NcatBot 启动完成
 
 api.post_private_msg_sync(123456, "你好") # 此时 NcatBot 已经启动完成, 可以正常使用接口
