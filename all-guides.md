@@ -1268,10 +1268,10 @@ Notice 事件未来可能被更加精细粒度的事件替代.
 ```python
 msg = {
     "time": 1743865655, # UNIX 时间戳
-    "self_id": 1550507358, # 机器人 QQ 号
+    "self_id": 123456, # 机器人 QQ 号
     "post_type": "notice", # 通知类型, 通知类型固定为 `notice`
     "notice_type": "friend_recall", # 通知类型, 消息撤回固定为 `friend_recall`
-    "user_id": 3051561876, # 撤回者 QQ 号
+    "user_id": 12345678, # 撤回者 QQ 号
     "message_id": 680308254 # 撤回的消息 ID
 }
 ```
@@ -1283,12 +1283,12 @@ msg = {
 ```python
 msg = {
     "time": 1743865776, # UNIX 时间戳
-    "self_id": 1550507358, # 机器人 QQ 号
+    "self_id": 123456, # 机器人 QQ 号
     "post_type": "notice", # 通知类型, 通知类型固定为 `notice`
     "notice_type": "poke", # 通知类型, 头像双击动作固定为 `poke`
     "sub_type": "double", # 事件子类型, 头像双击动作固定为 `double`
-    "target_id": 1550507358, # 被双击的 QQ 号
-    "user_id": 3051561876, # 操作者 QQ 号
+    "target_id": 123456, # 被双击的 QQ 号
+    "user_id": 12345678, # 操作者 QQ 号
     "raw_info": [
         {'col': '1', 'nm': '', 'type': 'qq', 'uid': 'u_-ev35gBX6zud3K0yA_nskA'},  # 发送者的 QQ 链接
         {'jp': 'https://zb.vip.qq.com/v2/pages/nudgeMall?_wv=2&actionId=0', 'src': 'http://tianquan.gtimg.cn/nudgeaction/item/0/expression.jpg', 'type': 'img'},  # 图标
@@ -1296,7 +1296,7 @@ msg = {
         {'col': '1', 'nm': '', 'tp': '0', 'type': 'qq', 'uid': 'u_sbV_ToZLelyJ73PGan2F-A'}, # 操作者的 QQ 链接
         {'txt': '', 'type': 'nor'} # 我不知道这是啥
     ], 
-    'sender_id': 3051561876
+    'sender_id': 12345678
 }
 ```
 
@@ -1308,13 +1308,13 @@ msg = {
 ```python
 msg = {
     "time": 1743866213, # UNIX 时间戳
-    "self_id": 1550507358, # 机器人 QQ 号
+    "self_id": 123456, # 机器人 QQ 号
     "post_type": "notice", # 通知类型, 通知类型固定为 `notice`
     "notice_type": "notify", # 通知类型, 输入状态更新固定为 `notify`
     "sub_type": "input_status", # 事件子类型, 输入状态更新固定为 `input_status`
     "status_text": "对方正在输入...", # 输入状态文本
     "event_type": 2, # 输入状态类型, 1 为开始输入, 2 为继续输入
-    "user_id": 3051561876, # 操作者 QQ 号
+    "user_id": 12345678, # 操作者 QQ 号
     "group_id": 0 # 群号
 }
 ```
@@ -1379,10 +1379,10 @@ msg = {
 ```python
 msg = {
     "time": 1743864886, # UNIX 时间戳
-    "self_id": 1550507358, # 机器人 QQ 号
+    "self_id": 123456, # 机器人 QQ 号
     "post_type": "notice", # 通知类型, 通知类型固定为 `notice`
     "group_id": 701784439, # 群号
-    "user_id": 3051561876, # 上传者 QQ 号
+    "user_id": 12345678, # 上传者 QQ 号
     "file": {
         "id": "24f852ab9a17d7d5dc790b9262092189", # 文件 ID
         "name": "文件名", # 文件名
@@ -1404,12 +1404,12 @@ msg = {
 ```python
 msg = {
     "time": 1743865071, # UNIX 时间戳
-    "self_id": 1550507358, # 机器人 QQ 号
+    "self_id": 123456, # 机器人 QQ 号
     "post_type": "notice", # 通知类型, 通知类型固定为 `notice`
     "group_id": 701784439, # 群号
-    "user_id": 3051561876, # 撤回消息发送者 QQ 号
+    "user_id": 12345678, # 撤回消息发送者 QQ 号
     "notice_type": "group_recall" # 通知类型, 撤回消息固定为 `group_recall`
-    "operator_id": 3051561876, # 操作者 QQ 号
+    "operator_id": 12345678, # 操作者 QQ 号
     "message_id": 364573752 # 撤回的消息 ID
 }
 ```
@@ -1714,15 +1714,15 @@ msg.message = [
             'id': '7489858069394438109', 
             'content': [
                 {
-                        'self_id': 1550507358,
-                        'user_id': 3051561876, 
+                        'self_id': 123456,
+                        'user_id': 12345678, 
                         'time': 1743869088, 
                         'message_id': 671936880, 
                         'message_seq': 671936880, 
                         'real_id': 671936880, 
                         'real_seq': '0', 
                         'message_type': 'private', 
-                        'sender': {'user_id': 3051561876, 'nickname': '幻影彭', 'card': ''}, 'raw_message': '123456', 
+                        'sender': {'user_id': 12345678, 'nickname': '幻影彭', 'card': ''}, 'raw_message': '123456', 
                         'font': 14, 
                         'sub_type': 'friend', 
                         'message': [{'type': 'text', 'data': {'text': '123456'}}], 
@@ -1777,7 +1777,7 @@ msg.message = [
     {
         'type': 'at', 
         'data': {
-            'qq': 3051561876
+            'qq': 12345678
         }
     }
 ]
