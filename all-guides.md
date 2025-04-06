@@ -1078,15 +1078,26 @@ createTime: 2025/02/07 11:24:25
 permalink: /guide/awamzkai/
 ---
 
-## 回调函数机制
+## 什么是回调函数
 
-NcatBot 采用==回调函数==机制来完成事件上报. 回调函数是用户自定义的==异步函数==. 当对应事件发生时, NcatBot 会调用这些函数, 并将事件相关信息作为参数传递.
+NcatBot 采用==回调函数==机制来完成事件上报. 当对应事件发生时, NcatBot 会调用这些函数, 并将事件相关信息作为参数传递.
+
+NcatBot 的所有回调函数都**只有一个参数**, 用于传递所发生事件的信息, 典型的回调函数如下:
+
+```python
+def on_xxx_event(msg: BaseMessage): # 同步回调函数
+    do_something()
+```
+
+从 3.7.0 版本开始, 所有回调函数可以定义为同步函数, 但仍然建议使用异步回调函数.
 
 ## 注册回调函数
 
-NcatBot 要求所有回调函数都是==异步函数==, 也就是==必须用 `async def` 而不是 `def` 来定义==. 
+回调函数可以通过两种方式注册.
 
-并且, 在定义的上一行, 需要加上**回调函数注册修饰器**(`@bot.xxxx_event()`)来明确回调函数所绑定的 `BotClient` 实例以及**事件类型**.
+### 通过修饰器注册回调函数
+
+在回调函数的上一行, 加上**回调函数注册修饰器**(`@bot.xxxx_event()`)来明确回调函数所绑定的 `BotClient` 实例以及**事件类型**.
 
 ::: code-tabs
 @tab python
@@ -1102,29 +1113,6 @@ async def on_private_message(msg: PrivateMessage):
 :::
 
 Ncatbot 对回调函数的名字没有要求, 但按照习惯一般命名为 `on_[事件类型]`.
-
-> 线程安全提醒猫: 异步千万条, 安全第一条, 线程不安全, 数据两行泪.
-
-## 回调函数注册修饰器
-
-==回调函数==需要通过==回调函数注册修饰器==来绑定到 `BotClient` 实例对应的事件类型上.
-
-==回调函数注册修饰器==是 `BotClient` 类的成员函数, 用回调函数注册修饰器进行绑定后, 对应 `BotClient` 实例发生对应事件时, 会调用绑定的的回调函数.
-
-::: code-tabs
-@tab python
-
-```python
-@bot.private_event()
-async def on_private_message(msg: PrivateMessage):
-    _log.info(msg)
-    if msg.raw_message == '测试':
-        await bot.api.post_private_msg(msg.user_id, text="NcatBot 测试成功喵~")
-```
-
-:::
-
-`bot` 是一个 `BotClient` 实例, 使用 `bot.private_event()` 作为修饰器来注册回调函数.
 
 回调函数注册修饰器列表请查阅 [事件上报](./2.%20事件上报.md).
 
@@ -1172,11 +1160,52 @@ async def on_group_message(msg: GroupMessage):
 *"装饰器" 和 "修饰器" 都是 "decorator" 的译名, 有一部分是彭彭手写的, 一部分是 AI 写的, 所以出现了差异喵~*
 :::
 
+### 通过成员函数添加回调函数(推荐)
+
+`BotClient` 具有以下成员函数, 用于为相应事件添加回调函数:
+
+```python
+class BotClient:
+    def add_startup_handler(self, func): # 添加启动事件回调函数, 当 Bot 上线(能够收发消息时) 触发
+        pass # 所有实现略去
+
+    def add_group_event_handler(self, func): # 添加群聊事件回调函数, 当收到群聊消息时触发
+        pass
+
+    def add_private_event_handler(self, func): # 添加私聊事件回调函数, 当收到私聊消息时触发
+        pass
+
+    def add_notice_event_handler(self, func): # 添加通知事件回调函数, 当收到通知消息时触发
+        pass
+
+    def add_request_event_handler(self, func): # 添加请求事件回调函数, 当收到请求消息时触发
+        pass
+```
+
+通过修饰器注册参数时, 由于 Python 传参机制的问题, 无法正确调用类的成员函数. 使用 `BotClient` 的成员函数添加回调函数, 可以正确调用类的成员函数并传递实例参数.
+
+### Bot 启动事件的回调函数
+
+特别的, Bot 启动事件的回调函数只支持通过成员函数添加.
+
+例如:
+
+```python
+bot.add_startup_event_handler(lambda: print("NcatBot 启动成功喵~"))
+bot.run()
+```
+
+将在 Bot 登录完成可以收发消息后输出 `NcatBot 启动成功喵~`.
+
 ## 回调函数参数
 
-如何对事件做出回复, 事件回调函数的参数是什么?
+所有的回调函数调用时**只传递一个参数**, 对于类的成员函数, 使用 `BotClient.add_xxx_handler` 添加时会自动绑定 `self` 参数, 因此能够正确调用.
 
-用户自定义的回调函数接受一个 `msg` 参数, 该参数描述了上报事件的详细信息.
+调用回调函数时的传参描述了事件的详细信息, 那么如何解析这个参数呢?
+
+### Startup 类型回调函数参数
+
+Startup 类型事件**不传参**, 插件事件的 `Event.data` 为 None.
 
 ### Message 类型回调函数参数
 
@@ -1193,7 +1222,7 @@ async def on_group_message(msg: GroupMessage):
 
 下面给出简介, 详细信息移步[解析消息](3.%20解析消息.md)
 
-`msg` 是一个 `BaseMessage` 的派生类, 其成员均符合 [OneBot11 标准](https://github.com/botuniverse/onebot-11).
+调用时的传参 `msg` 是一个 `BaseMessage` 的派生类, 其成员均符合 [OneBot11 标准](https://github.com/botuniverse/onebot-11).
 
 `msg` 的主要成员表如下, 有关成员含义的更详细的信息可以参考 [OneBot11 消息事件](https://github.com/botuniverse/onebot-11/blob/d4456ee706f9ada9c2dfde56a2bcfc69752600e4/event/message.md):
 
@@ -1213,11 +1242,13 @@ async def on_group_message(msg: GroupMessage):
 - [OneBot11 数组格式消息](https://github.com/botuniverse/onebot-11/blob/d4456ee706f9ada9c2dfde56a2bcfc69752600e4/message/array.md)
 - [NapCat 消息事件](https://napneko.github.io/develop/event#message-%E4%BA%8B%E4%BB%B6)
 
-
-
 ### Notice 类型回调函数参数
 
-`msg` 是一个 `dict`, 支持的操作见 [NapCat 文档](https://napneko.github.io/develop/event#notice-%E4%BA%8B%E4%BB%B6).
+::: warning
+Notice 事件未来可能被更加精细粒度的事件替代.
+:::
+
+传入的 `msg` 是一个 `dict`, 支持的操作见 [NapCat 文档](https://napneko.github.io/develop/event#notice-%E4%BA%8B%E4%BB%B6).
 
 以下给出几个常见的事件:
 
@@ -1264,8 +1295,6 @@ msg = {
 
 参数示例及其解释:
 
-[2025-04-05 23:16:53,622.622] DEBUG    [Thread-3|MainProcess] Logger (client.py:handle_notice_event:95) | {'time': 1743866213, 'self_id': 1550507358, 'post_type': 'notice', 'notice_type': 'notify', 'sub_type': 'input_status', 'status_text': '对方正在输入...', 'event_type': 2, 'user_id': 3051561876, 'group_id': 0}
-
 
 ```python
 msg = {
@@ -1308,7 +1337,7 @@ msg = {
     "self_id": 123456789, # 机器人 QQ 号
     "post_type": "notice", # 通知类型, 通知类型固定为 `notice`
     "notice_type": "group_decrease", # 通知类型, 群成员减少固定为 `group_decrease`
-    "sub_type": "leave", # 事件子类型, 主动退群为 `leave`, 被踢为 `kick`, 登录号被踢为 `kick_me`
+    "sub_type": "leave", # 事件子类型, 主动退群为 `leave`, 被踢为 `kick`, Bot 被踢为 `kick_me`
     "group_id": 123456789, # 群号
     "operator_id": 987654321, # 操作者 QQ 号
     "user_id": 987654321, # 离开者 QQ 号
@@ -1354,6 +1383,10 @@ msg = {
 }
 ```
 
+要获取上传的文件, 需要使用 `BotAPI.get_file()` 方法, 传入 `msg["file"]["id"]` 作为参数即可.
+
+[BotAPI.get_file()](../4.%20API%20参考/2.%20主要%20API%20及其使用.md#通过%20`file_id`%20获取文件下载链接).
+
 #### 群消息撤回
 
 
@@ -1375,42 +1408,43 @@ msg = {
 
 ### Request 类型回调函数参数
 
-`msg` 是一个 `dict`, 支持的操作见 [NapCat 文档](https://napneko.github.io/develop/event#request-%E4%BA%8B%E4%BB%B6).
-
-以下给出几个常见的事件:
-
-#### 加群申请
-
-传入的参数示例及其解释:
-
 ```python
-msg = {
-    "time": 1609478707, # UNIX 时间戳
-    "self_id": 123456789, # 机器人 QQ 号
-    "post_type": "request", # 请求类型, 请求类型固定为 `request`
-    "request_type": "group", # 请求类型, 加群申请固定为 `group`
-    "sub_type": "add", # 子类型, 支持 `add` 和 `invite`, 前者是主动添加, 后者是接受邀请
-    "user_id": 987654321, # 申请加群的人的 QQ 号
-    "comment": "你好", # 验证信息
-    "flag": "1234567890" # flag, 通过请求时应该提供
-}
+@bot.request_event()
+def on_request(msg: Request):
+    msg.reply_sync(False, "No") # 拒绝请求
 ```
 
-#### 加好友申请
+传入的 `msg` 是一个 `ncatbot.core.request.Request` 对象.
 
-传入的参数示例及其解释:
+其原型如下:
 
 ```python
-msg = {
-    "time": 1609478707, # UNIX 时间戳
-    "self_id": 123456789, # 机器人 QQ 号
-    "post_type": "request", # 请求类型, 请求类型固定为 `request`
-    "request_type": "friend", # 请求类型, 加好友申请固定为 `friend`
-    "user_id": 987654321, # 申请加好友的人的 QQ 号
-    "comment": "你好", # 验证信息
-    "flag": "1234567890" # flag, 通过请求时应该提供
-}
+class Request():
+    """请求事件, 部分实现省略"""
+    __slots__ = (
+        "time", # UNIX 时间戳
+        "self_id", # 机器人 QQ 号
+        "request_type", # 请求类型, 加群为 `group`, 加好友为 `friend`
+        "sub_type", # 子类型, 支持 `add` 和 `invite`, 前者是主动添加, 后者是接受邀请
+        "user_id", # 请求者 QQ 号
+        "comment", # 验证信息
+        "flag", # flag, 通过请求时应该提供
+    )
+    
+    def is_friend_add(self):
+        return self.request_type == "friend"
+        
+    def is_group_add(self):
+        return self.request_type == "group"
+    
+    async def reply(self, accept: bool = True, comment: str = ""):
+        pass      
+    
+    def reply_sync(self, accept: bool = True, comment: str = ""):
+        pass
 ```
+
+一般直接使用 `reply` 或者 `reply_sync` 方法处理即可.
 
 ---
 title: 事件上报
@@ -1433,6 +1467,7 @@ OFFICIAL_GROUP_MESSAGE_EVENT = "ncatbot.group_message_event"
 OFFICIAL_PRIVATE_MESSAGE_EVENT = "ncatbot.private_message_event"
 OFFICIAL_REQUEST_EVENT = "ncatbot.request_event"
 OFFICIAL_NOTICE_EVENT = "ncatbot.notice_event"
+OFFICIAL_STARUP_EVENT = "ncatbot.starup_event"
 ```
 
 ### 自定义事件类型
@@ -1593,7 +1628,7 @@ permalink: /guide/parsemsg/
 
 我们称 `BaseMessage` 实例为**消息**.
 
-三个类的具体代码位置为 `ncatbot.core`.
+三个类的具体代码位置为 `ncatbot.core.message`.
 
 [查看简介](1.%20回调函数.md#Message%20类型回调函数参数).
 
@@ -2403,13 +2438,13 @@ createTime: 2025/02/07 11:25:41
 permalink: /guide/2dsviohi/
 ---
 
-## 重要接口
-
-### 发送私聊/群聊合并转发消息
+## 部分 API 简介 1
 
 ::: warning
-此接口和 NapCat 同名接口参数不一致.
+此部分接口和 NapCat 同名接口参数不一致.
 :::
+
+### 发送私聊/群聊合并转发消息
 
 ```python
     async def send_private_forward_msg(
@@ -2429,23 +2464,26 @@ permalink: /guide/2dsviohi/
 
 示例返回(是一个 Python 的 `dict`):
 
-```json
-{
+```python
+result = {
   "status": "ok",
   "retcode": 0,
   "data": {
+    "message_id": "123456789" # 你发出去的这条消息的 message_id
   },
-  "message": "我没试过不知道是啥",
-  "wording": "我没试过不知道是啥",
-  "echo": "我没试过不知道是啥"
+  "message": "这不重要",
+  "wording": "这不重要",
+  "echo": "这不重要"
 }
 ```
 
-## 其它接口
+## 部分 API 简介 2
 
-和 [NapCat](https://napcat.apifox.cn/) 的同名接口完全一致.
+此部分接口和 NapCat 同名接口参数一致.
 
-### 例1. [设置账号信息](https://napcat.apifox.cn/226657374e0)
+返回值可以参考 [NapCat API 文档](https://napcat.apifox.cn/226657374e0)
+
+### [设置账号信息](https://napcat.apifox.cn/226657374e0)
 
 ```python
     async def set_qq_profile(self, nickname: str, personal_note: str, sex: str):
@@ -2456,7 +2494,7 @@ permalink: /guide/2dsviohi/
 - `sex`: 性别, 字面量 `男` / `女` 之一.
 - 返回: 一个 `dict` 表示请求响应结果.
 
-示例调用: `bot.api.set_qq_profile("彭彭", "咱好想和木子姐姐贴贴啊喵qwq", "猫猫")`.
+示例调用: `bot.api.set_qq_profile("彭彭", "咱好想和木子姐姐贴贴啊喵qwq", "女")`.
 
 示例返回(是一个 Python 的 `dict`):
 
@@ -2468,41 +2506,16 @@ permalink: /guide/2dsviohi/
     "result": 0,
     "errMsg": ""
   },
-  "message": "我没试过不知道是啥",
-  "wording": "我没试过不知道是啥",
-  "echo": "我没试过不知道是啥"
+  "message": "这不重要",
+  "wording": "这不重要",
+  "echo": "这不重要"
 }
 ```
 
-### 例2. [处理好友请求](https://napcat.apifox.cn/226656932e0)
-
-```python
-    async def set_friend_add_request(self, flag: str, approve: bool, remark: str):
-```
-
-- `flag`: 请求 id(request 事件中的 `user_id` 就是此 id).
-- `approve`: 是否同意.
-- `remark`: 好友备注.
-- 返回: 一个 `dict` 表示请求响应结果.
-
-示例调用: `bot.api.set_friend_add_request("123456789", True, "彭彭")`.
-
-示例返回(是一个 Python 的 `dict`):
-
-```json
-{
-  "status": "ok",
-  "retcode": 0,
-  "data": null,
-  "message": "我没试过不知道是啥",
-  "wording": "我没试过不知道是啥",
-  "echo": "我没试过不知道是啥"
-}
-```
 
 ## 函数原型参考
 
-以下给出 `ncatbot.core.api.BotAPI` 的全部成员函数原型.
+以下给出 `ncatbot.core.api.api.BotAPI` 的全部成员函数原型.
 
 ### 用户接口
 
@@ -3952,7 +3965,7 @@ permalink: /guide/pasevent/
 - `ncatbot.utils.assets.literals.OFFICIAL_PRIVATE_MESSAGE_EVENT = "ncatbot.private_message_event"`
 - `ncatbot.utils.assets.literals.OFFICIAL_REQUEST_EVENT = "ncatbot.request_event"`
 - `ncatbot.utils.assets.literals.OFFICIAL_NOTICE_EVENT = "ncatbot.notice_event"`
-- `ncatbot.utils`
+- `ncatbot.utils.assets.literals.OFFICIAL_STARTUP_EVENT = "ncatbot.startup_event"`
 
 插件也可以自行发布事件, 具体请继续阅读.
 
@@ -3996,9 +4009,35 @@ class MyPlugin(BasePlugin):
 
 ### 事件回调函数
 
-订阅事件时需要指定一个回调函数, 回调函数需要接受一个 `Event` 类型的参数, 并且必须定义为==异步函数==.
+订阅事件时需要指定一个回调函数, 回调函数需要接受一个 `Event` 类型的参数.
 
 在事件回调函数中可以对事件进行处理, 也可以调用 `Event` 的方法停止事件传播或者添加事件处理结果.
+
+#### Event 原型
+
+```python
+class Event:
+    def __init__(self, type: str, data: Any, source: EventSource = None):
+        """初始化事件"""
+        self.type = type # 事件类型, 定义见上方
+        self.data = data # 事件数据
+        self.source = source  # 事件源, 描述事件触发的群聊和用户
+
+    def stop_propagation(self):
+        """停止事件的传播:当调用此方法后，后续的处理器将不会被执行"""
+
+    def add_result(self, result: Any):
+        """添加事件处理结果"""
+
+    def __repr__(self):
+        return f'Event(type="{self.type}",data={self.data})'
+```
+
+#### Event.data 的规定
+
+对于官方事件类型, 对应的 `Event.data` 保证和 [回调函数参数](../../3.%20事件处理/1.%20回调函数.md#回调函数参数)一致.
+
+对于自定义事件类型, 插件作者应该自己定义规范. 
 
 ## 发布事件
 
