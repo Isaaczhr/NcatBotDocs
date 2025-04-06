@@ -186,8 +186,8 @@ sudo firewall-cmd --reload
 @tab Python
 ```python
 from ncatbot.core import BotClient, GroupMessage, PrivateMessage
-from ncatbot.utils.config import config
-from ncatbot.utils.logger import get_log
+from ncatbot.utils import config
+from ncatbot.utils import get_log
 
 _log = get_log()
 
@@ -378,8 +378,8 @@ NcatBot 需要 QQ 版本至少达到 `9.9.18` 才能正常运行, 如果你不�
 
 ```python
 from ncatbot.core import BotClient, GroupMessage, PrivateMessage
-from ncatbot.utils.config import config
-from ncatbot.utils.logger import get_log
+from ncatbot.utils import config
+from ncatbot.utils import get_log
 
 _log = get_log()
 
@@ -699,8 +699,8 @@ NcatBot 是如何运作的？
 ```python
 # ========= 导入必要模块 ==========
 from ncatbot.core import BotClient, GroupMessage, PrivateMessage
-from ncatbot.utils.config import config
-from ncatbot.utils.logger import get_log
+from ncatbot.utils import config
+from ncatbot.utils import get_log
 
 # ========== 设置配置项 ==========
 config.set_bot_uin("123456")  # 设置 bot qq 号 (必填)
@@ -737,9 +737,9 @@ if __name__ == "__main__":
 
 ```python
 from ncatbot.core import BotClient
-from ncatbot.core.message import GroupMessage, PrivateMessage
-from ncatbot.utils.config import config
-from ncatbot.utils.logger import get_log
+from ncatbot.core import GroupMessage, PrivateMessage
+from ncatbot.utils import config
+from ncatbot.utils import get_log
 ```
 
 :::
@@ -973,7 +973,7 @@ stop_napcat = False  # NcatBot 下线时是否停止 NapCat
 部分常用配置项可以在代码里直接指定.
 
 ```python
-from ncatbot.utils.config import config
+from ncatbot.utils import config
 
 config.set_bot_uin("123456")  # 设置 bot qq 号 (必填)
 config.set_root("123456")  # 设置 bot 超级管理员账号 (建议填写)
@@ -1012,7 +1012,7 @@ bot.run(
 @tab python
 
 ```python
-from ncatbot.utils.config import config
+from ncatbot.utils import config
 
 config.load_config("path/to/config.yaml")
 ```
@@ -1025,7 +1025,7 @@ config.load_config("path/to/config.yaml")
 
 ::: code-tabs
 @tab python
-from ncatbot.utils.config import config
+from ncatbot.utils import config
 
 config.set_bt_uin("123456")
 config.set_root("123456")
@@ -1450,7 +1450,7 @@ OFFICIAL_NOTICE_EVENT = "ncatbot.notice_event"
 
 ```python
 from ncatbot.core import BotClient
-from ncatbot.core.message import GroupMessage, PrivateMessage
+from ncatbot.core import GroupMessage, PrivateMessage
 
 bot = BotClient()
 
@@ -1518,8 +1518,8 @@ async def on_request_message(msg): # 绑定请求消息回调函数
 @tab python
 
 ```python
-from ncatbot.core.client import BotClient
-from ncatbot.core.message import GroupMessage
+from ncatbot.core import BotClient
+from ncatbot.core import GroupMessage
 
 bot = BotClient()
 
@@ -1593,7 +1593,7 @@ permalink: /guide/parsemsg/
 
 我们称 `BaseMessage` 实例为**消息**.
 
-三个类的具体代码位置为 `ncatbot.core.message`.
+三个类的具体代码位置为 `ncatbot.core`.
 
 [查看简介](1.%20回调函数.md#Message%20类型回调函数参数).
 
@@ -2028,7 +2028,7 @@ MessageChain 这个词是不是很熟悉呢?
 #### 导入 Message Chain 有关类
 
 ```python
-from ncatbot.core.element import (
+from ncatbot.core import (
     MessageChain,  # 消息链，用于组合多个消息元素
     Text,          # 文本消息
     Reply,         # 回复消息
@@ -3788,7 +3788,7 @@ __all__ = ["MyPlugin"]
 import os
 
 from ncatbot.plugin import BasePlugin, CompatibleEnrollment
-from ncatbot.core.message import GroupMessage
+from ncatbot.core import GroupMessage
 
 bot = CompatibleEnrollment  # 兼容回调函数注册器
 
@@ -3815,7 +3815,7 @@ class MyPlugin(BasePlugin):
 
 ```python
 from ncatbot.core import BotClient
-from ncatbot.utils.config import config
+from ncatbot.utils import config
 
 config.set_bot_uin("123456")  # 设置 bot qq 号 (必填)
 config.set_ws_uri("ws://localhost:3001")  # 设置 napcat websocket server 地址
@@ -3833,7 +3833,7 @@ if __name__ == "__main__":
 
 ```python
 from ncatbot.plugin import BasePlugin, CompatibleEnrollment
-from ncatbot.core.message import GroupMessage
+from ncatbot.core import GroupMessage
 ```
 
 - `BasePlugin`: 插件基类. 所有的插件必须是 `BasePlugin` 的派生类, 否则无法被正常加载.
@@ -3946,12 +3946,13 @@ permalink: /guide/pasevent/
 
 事件类型命名规范为 `[插件名].[事件名]`.
 
-四大基本事件 (群聊消息, 私聊消息, 请求消息, 通知消息) 的事件名封装如下:
+基本事件 (群聊消息, 私聊消息, 请求消息, 通知消息, 启动事件) 的事件名封装如下:
 
-- `ncatbot.utils.literals.OFFICIAL_GROUP_MESSAGE_EVENT = "ncatbot.group_message_event"`
-- `ncatbot.utils.literals.OFFICIAL_PRIVATE_MESSAGE_EVENT = "ncatbot.private_message_event"`
-- `ncatbot.utils.literals.OFFICIAL_REQUEST_EVENT = "ncatbot.request_event"`
-- `ncatbot.utils.literals.OFFICIAL_NOTICE_EVENT = "ncatbot.notice_event"`
+- `ncatbot.utils.assets.literals.OFFICIAL_GROUP_MESSAGE_EVENT = "ncatbot.group_message_event"`
+- `ncatbot.utils.assets.literals.OFFICIAL_PRIVATE_MESSAGE_EVENT = "ncatbot.private_message_event"`
+- `ncatbot.utils.assets.literals.OFFICIAL_REQUEST_EVENT = "ncatbot.request_event"`
+- `ncatbot.utils.assets.literals.OFFICIAL_NOTICE_EVENT = "ncatbot.notice_event"`
+- `ncatbot.utils`
 
 插件也可以自行发布事件, 具体请继续阅读.
 
@@ -4575,7 +4576,7 @@ permalink: /guide/eznrproj/
 
 ```python
 from ncatbot.core import BotClient
-from ncatbot.core.message import GroupMessage
+from ncatbot.core import GroupMessage
 
 bot = BotClient()
 
@@ -4595,7 +4596,7 @@ bot.run()
 
 ```python
 from ncatbot.core import BotClient
-from ncatbot.core.message import GroupMessage
+from ncatbot.core import GroupMessage
 
 bot = BotClient()
 
@@ -4682,7 +4683,7 @@ api: <KEY>
 
 ```python
 from ncatbot.plugin import BasePlugin, CompatibleEnrollment, Event
-from ncatbot.core.message import GroupMessage, PrivateMessage
+from ncatbot.core import GroupMessage, PrivateMessage
 import asyncio
 import httpx
 import openai
