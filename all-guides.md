@@ -549,7 +549,7 @@ permalink: /guide/devguide/
 
 #### 嵌入到已有项目
 
-咕咕咕
+参考[嵌入开发](../5.%20杂项/7.%20嵌入开发.md).
 
 ### 学习路径
 
@@ -601,7 +601,9 @@ permalink: /guide/devguide/
 
 [1. 回调函数](../3.%20事件处理/1.%20回调函数.md): 了解 NcatBot 如何处理事件, 了解 NcatBot 向回调函数传递的的事件参数.
 
-[2. 事件上报](../3.%20事件处理/2.%20事件上报.md): 了解 NcatBot 可以监听哪些 QQ 事件.
+[2. 事件上报](../3.%20事件处理/2.%20事件上报.md): 了解 NcatBot 可以监听哪些 QQ 事件. 以及如何获取这些事件的有关信息
+
+[3. 消息解析](../3.%20事件处理/3.%20消息解析.md): 特别了解如何解析消息, 以及如何获取消息的详细信息.
 
 ### 4. API 参考
 
@@ -624,6 +626,8 @@ permalink: /guide/devguide/
 [5. CLI](../5.%20杂项/5.%20CLI.md): NcatBot-CLI 用于管理 NcatBot 的插件, 了解如何使用 NcatBot-CLI 以便于开发 NcatBot 插件.
 
 [6. 术语表](../5.%20杂项/6.%20术语表.md): 了解 NcatBot 的术语.
+
+[7. 嵌入开发](../5.%20杂项/7.%20嵌入开发.md): 了解如何将 NcatBot 嵌入到其它项目中.
 
 ### 6. 开发 NcatBot 插件
 
@@ -972,6 +976,10 @@ stop_napcat = False  # NcatBot 下线时是否停止 NapCat
 
 部分常用配置项可以在代码里直接指定.
 
+::: warning
+由于历史原因, bot_uin 的设置函数名叫 `set_bot_uin` 但变量名叫 `bt_uin`.
+:::
+
 ```python
 from ncatbot.utils import config
 
@@ -989,6 +997,7 @@ config.set_webui_token("napcat")  # 设置 token (webui 的 token)
 
 ```python
 bot.run(
+    bt_uin="123456", # 注意不是 bot_uin, 这里应该和 config 的成员名一致
     ws_uri="ws://127.0.0.1:3001",
     ws_token="",
     webui_uri="http://127.0.0.1:6099",
@@ -3639,6 +3648,109 @@ if __name__ == "__main__":
 
 
 ---
+title: 嵌入开发
+createTime: 2025/04/06 20:00:05
+permalink: /guide/embeddev/
+---
+
+从 3.7.0 版本后, NcatBot 对嵌入开发的支持更加完善.
+
+使用 BotClient 类可以方便的将 Ncatbot 作为模块嵌入到你的 Python 项目中.
+
+## 适用场景
+
+### 对 NcatBot 插件功能依赖弱
+
+轻度使用 NcatBot 插件功能, 或者不使用 NcatBot 插件功能时, 推荐以[非阻塞模式]启动
+
+非阻塞模式下, NcatBot 的全部可持久化功能都不稳定, 包括内置可持久化数据, 配置项, 权限. 以上三个功能的数据可能将不会被保存, 也不会被加载.
+
+### 对 NcatBot 插件功能依赖强
+
+如果你的项目高度依赖 NcatBot 插件的完善功能, 推荐以[引导模式]启动, 让 NcatBot 引导程序来管理插件, 你的项目作为守护进程运行.
+
+此时, NcatBot 的全部可持久化功能都是稳定的, 但是你需要注意, Ncatbot 在接受 `Ctrl+C` 信号时, 进入退出流程, 你可能需要捕获这些信号以便你的项目也能正常退出.
+
+## 非阻塞模式
+
+`BotClient` 对象提供 `run_none_blocking` 方法以非阻塞模式启动 NcatBot.
+
+### 提前引导 + sleep
+
+启动 NcatBot 需要一定时间. 
+
+推荐先用引导程序完成一次启动引导, 不要关闭启动的 NapCat 服务. 接着再以非阻塞模式. 此时 NcatBot 将启动快速引导模式, 大约 sleep 10 秒后, NcatBot 就会进入正常运行模式.
+
+此时所有接口均可用.
+
+```python
+import time
+
+from ncatbot.core import BotClient
+
+bot = BotClient()
+bot.run_none_blocking(bt_uin="123456", root="123456") # 在这里指定 QQ 运行参数, 可以替代全局变量 config
+
+bot.run_none_blocking() # 以非阻塞模式启动 NcatBot
+time.sleep(10) # 等待 NcatBot 启动完成
+
+bot.api.post_private_msg_sync(123456, "你好") # 此时 NcatBot 已经启动完成, 可以正常使用接口
+
+```
+
+### STARTUP_EVENT 回调函数 + 锁
+
+`BotClient` 对象提供针对 `startup_event` 事件的回调函数, 以在 NcatBot 接口可用发.
+
+可以通过全局加锁的方式来精确地在 NcatBot 接口可用时执行你的代码.
+
+```python
+from ncatbot.core import BotClient
+from threading import Lock
+
+
+lock = Lock()
+lock.acquire() # 全局加锁
+
+bot = BotClient()
+bot.add_startup_handler(lambda: lock.release()) # 在 NcatBot 接口可用时, 释放全局锁
+bot.run_none_blocking(bt_uin="123456", root="123456")
+lock.acquire() # 等待 NcatBot 启动完成
+bot.api.post_private_msg_sync(123456, "你好") # 此时 NcatBot 已经启动完成, 可以正常使用接口
+```
+
+## 引导模式
+
+使用正常的 NcatBot 引导程序, 添加一个 startup 回调函数来引导你的项目启动.
+
+你的项目必须以守护进程的形式在**另一个线程**运行.
+
+```python
+from ncatbot.core import BotClient, BotAPI
+from threading import Thread
+
+def start_my_app(api:BotAPI):
+    print("start my app")
+    api.post_private_msg_sync("1234", "你好呀嵌入程序")
+
+def start_my_app_warp():
+    th = Thread(
+        target=lambda api=bot.api:start_my_app(api),
+        daemon=True,
+    ) # 守护模式在另一个线程运行
+    th.start()
+
+bot = BotClient()
+bot.add_startup_handler(start_my_app_warp)
+bot.run(bt_uin="1234", root="1234")
+
+```
+
+## 提醒
+
+注意, 如果你需要**同步调用** NcatBot 的 API, 请使用 `xxx_xxx_sync` 系列函数. 没有 `_sync` 后缀的函数都是异步函数.
+
+---
 title: 了解 NcatBot 插件
 createTime: 2025/02/08 10:07:54
 permalink: /guide/dplugins/
@@ -4652,6 +4764,17 @@ bot.run()
 运行如下:
 ![输入图片说明](https://foruda.gitee.com/images/1737626482165344411/5bba3f8f_13790314.png)
 
+### 通过好友/加群请求
+
+```python
+@bot.request_event()
+def on_request_event(msg: Request):
+    comment = msg.comment # 验证信息
+    if "不要通过" in comment:
+        msg.reply_sync(False, comment="通过")
+    else:
+        msg.reply_sync(True, comment="通过")
+```
 
 ---
 title: LLM_API 插件项目
