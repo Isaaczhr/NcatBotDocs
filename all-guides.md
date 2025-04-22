@@ -22,17 +22,27 @@ NcatBot 是 [NapCat](https://github.com/NapNeko/NapCatQQ) 的 Python SDK (开发
 
 ## 安装 NcatBot
 
-[Windows 安装 NcatBot](./1.2%20Windows%20安装.md)
+### 极简指南
 
-[Windows 一键安装 NcatBot](./1.4%20Windows%20一键安装.md)
+极简指南，适合了解开源社区机制和 Python 语言的同学快速完成安装。
 
-[Linux 安装 NcatBot](./1.1%20Linux%20安装.md)
+- [极简安装指南](./1.5%20极简安装指南.md)
 
-[MacOS 安装 NcatBot(暂未支持)](./1.3%20MacOS%20安装.md)
+### 详细指南
 
-[使用云上 NcatBot 镜像](../5.%20杂项/4.%20轻松上云.md)
+包含尽可能详细的教程，推荐第一次接触开源社区项目或者第一次接触 Python 的同学使用。
 
-## 使用 NcatBot 开发
+- [Windows 安装 NcatBot](./1.2%20Windows%20安装.md)
+
+- [Windows 一键安装 NcatBot](./1.4%20Windows%20一键安装.md)
+
+- [Linux 安装 NcatBot](./1.1%20Linux%20安装.md)
+
+- [MacOS 安装 NcatBot(暂未支持)](./1.3%20MacOS%20安装.md)
+
+- [使用云上 NcatBot 镜像](../5.%20杂项/4.%20轻松上云.md)
+
+## 使用 NcatBot 开发自己的 Bot
 
 移步 [开发指南](2.%20开发指南.md).
 
@@ -519,44 +529,85 @@ NcatBot 需要 QQ 版本至少达到 `9.9.18` 才能正常运行, 如果你不�
 请查阅 [FAQ](../7.%20常见问题/1.%20安装时常见问题.md) 以了解更多常见问题.
 
 ---
+title: 极简安装指南
+createTime: 2025/04/22 15:21:39
+permalink: /guide/minimali/
+---
+
+## 环境检查
+
+- Python：版本 >= 3.9
+- 操作系统：
+  - Windows 
+    - 将直接使用系统 QQ, 请自行安装好 QQ >= 9.9.16.18 (2024 年 8 月之后安装的 QQ 都可以使用)。
+  - Linux
+    - 理论上支持所有发行版, 但推荐 Ubuntu 22.04 LTS。
+    - 安装好 curl。
+- 网络环境：放通本机 6099 和 3001 端口，如果确实存在占用，参考[配置项](../2.%20基本开发/2.%20配置项.md)解决。
+
+## 安装 NcatBot
+
+```bash
+pip install ncatbot -U -i https://mirrors.aliyun.com/pypi/simple/
+```
+
+## Hello NcatBot
+
+```python
+from ncatbot.core import BotClient
+bot = BotClient()
+api = BotClient.run_blocking(bt_uin="123456", root="234567")
+api.post_private_msg("345678", "Hello NcatBot~meow")
+```
+
+---
 title: 开发指南
 createTime: 2025/03/25 23:21:39
 permalink: /guide/devguide/
 ---
 
-## 概览
 
-### NcatBot 的几种开发范式
+## NcatBot 的几种开发范式
 
-#### BotClient 项目
+### 主动模式
 
-快速开始中示例是一个 BotClient 项目. BotClient 项目可以只包含一个文件, 没有严格的目录结构要求和命名要求, 适合简单上手体验.
+主动模式下，进程的管理权限由你持有。使用 `BotClient.run_blocking()` 方法启动，该方法会返回一个 `BotAPI` 实例，通过该实例可以调用 NcatBot 提供的接口。退出时需要使用 `BotClient.exit()` 方法通知 NcatBot 完成退出操作。再结束进程。
 
-参考 [示例代码解析](../2.%20基本开发/1.%20示例代码解析.md).
+主动模式下，NcatBot 就是一个普通的第三方模块，你可以按照任何你喜欢的方式布局你的项目。
 
-参考 [简单的 BotClient 项目](../8.%20实际项目参考/1.%20简单%20BotClient%20项目.md).
+主动模式参考：
 
-#### 插件项目(推荐)
+### 插件模式
+
+插件模式下，进程的管理权限由 NcatBot-PluginSystem 持有。使用 `BotClient.run()` 方法启动，调用后进程控制权被转交。启动后可以使用 `Ctrl+C` 正常退出。
 
 插件项目是 NcatBot 的核心, 也是 NcatBot 的主要开发范式. 插件项目有**一定的目录结构要求和命名规范要求**. 与之对应的, 插件项目具有**便利的功能支持**和**丰富的社区生态**, 通过插件项目, 可以开发出功能强大, 分发容易的 QQ 机器人.
 
-
 从 [了解 NcatBot 插件](../6.%20开发%20NcatBot%20插件/1.%20了解%20NcatBot%20插件.md) 开始, 阅读插件开发的文档.
 
-实际插件项目参考:
+插件模式参考：
 
 - [LLM_API 插件项目](../8.%20实际项目参考/2.%20LLM_API%20插件项目.md).
 
-#### 嵌入到已有项目
+### 一些澄清
 
-参考[嵌入开发](../5.%20杂项/7.%20嵌入开发.md).
+主动模式和插件模式唯一的区别是**控制权所属**。主动模式下，只要调用了 `BotClient.run_blocking()` 方法，就会加载工作目录下 `plugins/` 中的插件。NcatBot 及其插件被抽象为一个 `BotClient` 实例。
 
-### 学习路径
+## 从实际项目快速了解
+
+- [主动发送消息]
+- [处理好友请求和加群请求]
+- [发送包含图片、表情、文字、At、回复的复杂消息]
+- [发送合并转发消息]
+- [上传和处理文件]
+- [定时任务]
+
+## 学习路径
 
 - 阅读你操作系统的安装方式.
 - 阅读 [示例代码解析](../2.%20基本开发/1.%20示例代码解析.md).
 
-#### 开发插件项目
+### 开发插件项目
 
 - 阅读[回调函数](../3.%20事件处理/1.%20回调函数.md)部分, 了解回调函数参数的数据格式.
 - 重点阅读:
@@ -572,7 +623,7 @@ permalink: /guide/devguide/
 - 阅读[事件上报](../3.%20事件处理/2.%20事件上报.md), 了解能够监听和处理的事件类型.
 - 补充学习: 按照文档导航补充学习其它知识, 或者使用文档项目的搜索功能.
 
-#### 开发 BotClient 项目
+### 开发 BotClient 项目
 
 - 仔细阅读 [回调函数](../3.%20事件处理/1.%20回调函数.md), 明确如何注册回调函数.
 - 学习示例插件项目:
@@ -959,6 +1010,7 @@ skip_account_check = False  # 是否跳过账号一致性检查
 
 # NapCat 行为
 stop_napcat = False  # NcatBot 下线时是否停止 NapCat
+remote_login = False # 是否使用远程登录方式, 如果为 True, 将默认用户需要在 NapCat 处自行完成登录
 ```
 
 - `bot_uin`: 就是 **Bot** QQ 号. 这个千万不能填错了喵~
@@ -1417,6 +1469,8 @@ msg = {
 
 ### Request 类型回调函数参数
 
+Request 类型一般用于**处理好友添加请求**或者**处理群聊加入请求**。
+
 ```python
 @bot.request_event()
 def on_request(msg: Request):
@@ -1435,6 +1489,7 @@ class Request():
         "self_id", # 机器人 QQ 号
         "request_type", # 请求类型, 加群为 `group`, 加好友为 `friend`
         "sub_type", # 子类型, 支持 `add` 和 `invite`, 前者是主动添加, 后者是接受邀请
+        "group_id", # 群聊 QQ 号, 如果是好友申请, 为 None
         "user_id", # 请求者 QQ 号
         "comment", # 验证信息
         "flag", # flag, 通过请求时应该提供
@@ -2452,6 +2507,10 @@ permalink: /guide/2dsviohi/
 ::: warning
 此部分接口和 NapCat 同名接口参数不一致.
 :::
+
+### 处理好友请求和加群请求
+
+[参考](../3.%20事件处理/1.%20回调函数.md#Request%20类型回调函数参数)
 
 ### 发送私聊/群聊合并转发消息
 
@@ -3535,6 +3594,8 @@ createTime: 2025/03/23 16:45:00
 permalink: /guide/easytogo/
 ---
 
+
+
 ### 必要的基础知识
 
 - 使用 **ssh** 连接 Linux 服务器.
@@ -3547,6 +3608,22 @@ permalink: /guide/easytogo/
 申请扶摇云账号后需要先**实名认证**, 通过认证后即可购买云服务器.
 
 购买套餐时请选择 ==Ubuntu-22.04-Ncatbot预装版== 镜像.
+
+[购买页](https://v10.fyyun.net/cart/goodsList.htm?fpg_id=1&spg_id=3)
+
+### 活动
+
+最新活动:
+- 扶摇云限时活动(2025/4/5-2025/4/20)
+- 参与条件: 未注册扶摇云平台账户或未购买扶摇云平台任意实例产品
+- 活动内容: 期间每日前三(购买后可联系客服查询)购买本站挂机宝系列任意产品，可联系平台客服领取10元现金红包。
+- 推荐朋友购买产品，任意挂机宝套餐（推介一名（仅未注册本平台账户）领3元现金红包无推荐上限）
+
+<div align="center">
+
+![background](https://raw.githubusercontent.com/liyihao1110/ncatbot/refs/heads/main/assets/background.png)
+
+</div>
 
 ### 运行 NcatBot
 
@@ -4673,9 +4750,8 @@ createTime: 2025/02/09 16:34:49
 permalink: /guide/prgor4t7/
 ---
 
-## Frequently Asked Questions
 
-### 1. Windows10 为什么连接成功了发 "测试" 还是没反应
+### Windows10 为什么连接成功了发 "测试" 还是没反应
 
 这个问题是 Win10 命令行开启**快速编辑模式**后 "选中聚焦" 时被暂停导致的.
 
@@ -4683,21 +4759,15 @@ permalink: /guide/prgor4t7/
 
 也可[关闭快速编辑模式](https://juejin.cn/post/7021695977824190478)一劳永逸解决问题.
 
-### 2. QQ 提醒我使用了第三方插件
-
-这是 QQ 的风控. 建议是==不要频繁切换登录地点==, 也不要==频繁启动 NapCat==.
-
-Ncatbot 运行结束后不会关闭 NapCat 服务, 下次运行时会直接连接上次开启的 NapCat 服务, 请避免频繁启动 NapCat.
-
-### 3. 提示已经登录无法登录
+### 提示已经登录无法登录
 
 在电脑上退出 Bot 的 QQ 登录, 重试, 如果还是不行, 任务管理器杀掉所有的 QQ 进程后重试.
 
-### 4. Linux 系统提示 WebUI 连接失败
+### Linux 系统提示 WebUI 连接失败
 
 检查 ufw 防火墙设置，需要放通 3000/3001/6099 三个端口。
 
-### 5. Linux Loger: sudo 命令不存在, 请检查错误
+### Linux Loger: sudo 命令不存在, 请检查错误
 
 执行(Ubuntu):
 ```
@@ -4705,15 +4775,30 @@ apt-get update
 apt-get install sudo
 ```
 
-### 6. Linux 安装过程中，出现紫色界面(Package configuration)并卡住
+### Linux 安装过程中，出现紫色界面(Package configuration)并卡住
 
 先 Ctrl+C 退出程序, ==重启服务器==, 再执行 `python3 main.py`。
 
-### 7. 扫码登录过程中提示二维码过期
+### 扫码登录过程中提示二维码过期
 
 先 Ctrl+C 退出程序, 再执行 `python3 main.py` 重新运行。
 
-###
+### 获取二维码失败，请执行 `napcat stop` 后重启引导程序
+
+![image-20250412213633535](https://raw.githubusercontent.com/huan-yp/image_space/master/img/202504122136599.png)
+
+见[下一项](#httpconnectionpoolhost127001-port6099-read-timed-out-read-timeout5)。
+
+
+### HTTPConnectionPool(host='127.0.0.1', port=6099): Read timed out. (read timeout=5)
+
+![image-20250412213424631](https://raw.githubusercontent.com/huan-yp/image_space/master/img/202504122134722.png)
+
+Windows 的防火墙策略拦截了 6099 端口, 请检查防火墙设置。
+
+[参考](https://blog.csdn.net/albertsh/article/details/122163518)
+
+### Windows 无法启动此程序或运行时闪退
 
 Windows 已保护你的电脑
 Microsoft Defender SmartScreen 阻止了无法识别的应用启动。运行此应用可能会导致你的电脑存在风险。
@@ -4724,6 +4809,11 @@ createTime: 2025/03/26 08:41:23
 permalink: /guide/8v15vh4m/
 ---
 
+### QQ 提醒我使用了第三方插件
+
+这是 QQ 的风控. 建议是==不要频繁切换登录地点==, 也不要==频繁启动 NapCat==.
+
+Ncatbot 运行结束后不会关闭 NapCat 服务, 下次运行时会直接连接上次开启的 NapCat 服务, 请避免频繁启动 NapCat.
 
 ---
 title:  开发时常见问题
@@ -4802,11 +4892,11 @@ permalink: /guide/llmapipl/
 createTime: 2025/03/26 00:51:46
 ---
 
-### 介绍
+## 介绍
 
 LLM_API 插件不直接提供大语言模型对话服务, 而是提供基于事件的对话接口和基本配置服务.
 
-### 事件
+## 事件
 
 通过 `LLM_API.main` 事件触发调用 LLM 的服务, `Event` 参数的 data 部分为 LLM 输入参数, 事件的处理结果为 LLM 的回复.
 
@@ -4839,7 +4929,7 @@ LLM_API 插件不直接提供大语言模型对话服务, 而是提供基于事�
 }
 ```
 
-### 插件配置项
+## 插件配置项
 
 使用 NcatBot 的内置插件配置项功能, 三个核心配置项如下:
 
@@ -4856,11 +4946,11 @@ api: <KEY>
 ```
 
 
-### 测试
+## 测试
 
 拥有管理员权限可以发送 `/tllma` 触发大模型测试事件.
 
-### 源代码
+## 源代码
 
 ```python
 from ncatbot.plugin import BasePlugin, CompatibleEnrollment, Event
@@ -4888,7 +4978,6 @@ class LLM_API(BasePlugin):
         self.register_admin_func("test", self.test, raw_message_filter="/tllma", permission_raise=True) # 注册一个管理员功能, 需要提权以便在普通群聊中触发
     
     async def test(self, message: PrivateMessage):
-        # 通过事件调用插件提供的接口(其它插件也可以通过发布事件调用这个接口)
         result = (await self.publish_async(Event("LLM_API.main", {
                 "history": [
                 {
@@ -4930,6 +5019,53 @@ class LLM_API(BasePlugin):
         print(f"{self.name} 插件已卸载")
 ```
 
+## 解析
+
+### on_load
+
+```python
+async def on_load(self):
+    print(f"{self.name} 插件已加载")
+    print(f"插件版本: {self.version}")
+    self.register_config("url", DEFAULT_URL)
+    self.register_config("api", DEFAULT_API)
+    self.register_config("model", DEFAULT_MODEL) # 注册三个配置项
+    self.register_handler("LLM_API.main", self.main) # 注册事件(Event)处理器
+    self.register_admin_func("test", self.test, raw_message_filter="/tllma", permission_raise=True) # 注册一个管理员功能, 需要提权以便在普通群聊中触发
+```
+
+- 通过 `register_config` 注册所需要的配置项，配置项在**正常退出**时会保存，下次运行时自动加载。所有的配置项都需要在 `on_load` 中完成注册。
+- 通过 `register_handler` 注册事件处理器。事件总线在收到 `LLM_API.main` 事件时会调用 `self.main` 函数。
+- 通过 ``register_admin_func`` 注册一个管理员功能，功能的作用域只包括群聊和私聊，收到 `/tllma` 消息时，会进行鉴权，如果鉴权通过，则调用 `self.test` 函数。
+
+### self.main
+
+```python
+async def main(self, event: Event):
+    # 省略逻辑
+    event.add_result({
+        "text": "你好",
+        "status": 200,
+        "error": ""
+    })
+```
+
+- `self.main` 是插件服务的提供者，其它插件通过发布 `LLM_API.main` 事件来获得 `self.main` 提供的服务。
+- 通过 `event.add_result` 来添加事件处理结果，这个结果可以被事件发布者获取。
+
+### self.test
+
+```python
+async def test(self, message: PrivateMessage):
+    result = (await self.publish_async(Event("LLM_API.main", {
+        # 此处省略大模型调用参数的构造
+    })))[0]
+    await message.reply(text=result["text"] + result['error'])      
+```
+
+- `self.publish_async` 是 `BasePlugin` 类提供的发布事件的方法。通过该方法向事件总线发布事件。
+- 事件总线收到 `LLM_API.main` 事件，调用 `self.main` 函数（所有订阅了该事件的处理器），`self.main` 添加事件处理结果。接着用 `(await self.publish_async(...))` 获取所有的事件处理结果。
+- 只有一个处理器为该事件添加了结果，所以使用 `(await self.publish_async(...))[0]` 获取结果，再根据插件文档的说明正确解读。
 
 ---
 title: 早八提醒插件
@@ -4991,3 +5127,39 @@ class ZaoBa(BasePlugin):
     def exam(self, subject):
         print(f"要考试了, 是 {subject}")
 ```
+
+---
+title: 主动发送消息
+createTime: 2025/04/22 13:21:39
+permalink: /guide/activesm/
+---
+
+## 代码示例
+
+```python
+from ncatbot.core import BotClient
+
+bot = BotClient()
+api = bot.run_blocking(bt_uin="123456", root="1234567") # 启动 NcatBot, NcatBot 接口可用时返回 API 实例
+api.post_private_msg_sync(12345678, "你好") # 此时 NcatBot 已经启动完成, 可以正常使用接口
+bot.exit()
+print("退出")
+```
+
+- 应该不太需要解释，启动后直接调用 API 发送消息。
+- 只要 NcatBot 处于运行状态，同进程任何位置都可以使用 `BotAPI` 实例来调用接口。
+- 可以使用全局变量、传参等方式，将 `BotAPI` 实例传递到其他模块中，方便其他模块调用接口。
+- 主动发送消息和回调函数不冲突，在上面的代码中你仍然可以注册回调函数，在收到消息时做一些事情。
+
+
+---
+title: 处理好友请求和加群请求
+createTime: 2025/04/22 13:21:39
+permalink: /guide/friendag/
+---
+
+## 主动模式
+
+
+
+## 插件模式
