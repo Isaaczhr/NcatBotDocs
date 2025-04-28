@@ -49,7 +49,7 @@ LLM_API 插件不直接提供大语言模型对话服务, 而是提供基于事�
 - url: `/cfg LLM_API.url <your url>` 基准 url。
 - model: `/cfg LLM_API.model <your model>` 模型名。
 
-例如 [Kimi](https://platform.moonshot.cn/docs/guide/migrating-from-openai-to-kimi#%E5%85%B3%E4%BA%8E-api-%E5%85%BC%E5%AE%B9%E6%80%A7):
+例如 Kimi
 
 ```
 url: https://api.moonshot.cn/v1
@@ -68,8 +68,6 @@ api: <KEY>
 from ncatbot.plugin import BasePlugin, CompatibleEnrollment, Event
 from ncatbot.core import GroupMessage, PrivateMessage
 import asyncio
-import httpx
-import openai
 from concurrent.futures import ThreadPoolExecutor
 
 DEFAULT_URL = "url"
@@ -130,51 +128,3 @@ class LLM_API(BasePlugin):
     async def on_unload(self):
         print(f"{self.name} 插件已卸载")
 ```
-
-## 解析
-
-### on_load
-
-```python
-async def on_load(self):
-    print(f"{self.name} 插件已加载")
-    print(f"插件版本: {self.version}")
-    self.register_config("url", DEFAULT_URL)
-    self.register_config("api", DEFAULT_API)
-    self.register_config("model", DEFAULT_MODEL) # 注册三个配置项
-    self.register_handler("LLM_API.main", self.main) # 注册事件(Event)处理器
-    self.register_admin_func("test", self.test, raw_message_filter="/tllma", permission_raise=True) # 注册一个管理员功能, 需要提权以便在普通群聊中触发
-```
-
-- 通过 `register_config` 注册所需要的配置项，配置项在**正常退出**时会保存，下次运行时自动加载。所有的配置项都需要在 `on_load` 中完成注册。
-- 通过 `register_handler` 注册事件处理器。事件总线在收到 `LLM_API.main` 事件时会调用 `self.main` 函数。
-- 通过 `register_admin_func` 注册一个管理员功能，功能的作用域只包括群聊和私聊，收到 `/tllma` 消息时，会进行鉴权，如果鉴权通过，则调用 `self.test` 函数。
-
-### self.main
-
-```python
-async def main(self, event: Event):
-    # 省略逻辑
-    event.add_result({
-        "text": "你好",
-        "status": 200,
-        "error": ""
-    })
-```
-
-- `self.main` 是插件服务的提供者，其它插件通过发布 `LLM_API.main` 事件来获得 `self.main` 提供的服务。
-- 通过 `event.add_result` 来添加事件处理结果，这个结果可以被事件发布者获取。
-
-### self.test
-
-```python
-async def test(self, message: PrivateMessage):
-    result = (await self.publish_async(Event("LLM_API.main", {
-        # 此处省略大模型调用参数的构造
-    })))[0]
-    await message.reply(text=result["text"] + result['error'])      
-```
-
-- `self.publish_async` 是 `BasePlugin` 类提供的发布事件的方法。通过该方法向事件总线发布事件。
-- 事件总线收到 `LLM_API.main` 事件，调用 `self.main` 函数（所有订阅了该事件的处理器），`self.main` 添加事件处理结果。接着用 `(await self.publish_async(...))` 获取所有的事件处理结果。
-- 只有一个处理器为该事件添加了结果，所以使用 `(await self.publish_async(...))[0]` 获取结果，再根据插件文档的说明正确解读。

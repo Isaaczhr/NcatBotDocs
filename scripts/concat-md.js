@@ -43,13 +43,13 @@ const mdFiles = [
   'C:\\Users\\huany\\Desktop\\Projects\\QQ-Bot\\docs.ncatbot.xyz\\docs\\notes\\guide\\7. 常见问题\\2. 运行时常见问题.md',
   'C:\\Users\\huany\\Desktop\\Projects\\QQ-Bot\\docs.ncatbot.xyz\\docs\\notes\\guide\\7. 常见问题\\3. 开发时常见问题.md',
   'C:\\Users\\huany\\Desktop\\Projects\\QQ-Bot\\docs.ncatbot.xyz\\docs\\notes\\guide\\8. 实际项目参考\\1. 简单 BotClient 项目.md',
-  'C:\\Users\\huany\\Desktop\\Projects\\QQ-Bot\\docs.ncatbot.xyz\\docs\\notes\\guide\\8. 实际项目参考\\2. LLM_API 插件项目.md',
+  'C:\\Users\\huany\\Desktop\\Projects\\QQ-Bot\\docs.ncatbot.xyz\\other\\AI-LLM_API 插件项目.md',
   'C:\\Users\\huany\\Desktop\\Projects\\QQ-Bot\\docs.ncatbot.xyz\\docs\\notes\\guide\\8. 实际项目参考\\教程项目\\上传和获取文件.md',
   'C:\\Users\\huany\\Desktop\\Projects\\QQ-Bot\\docs.ncatbot.xyz\\docs\\notes\\guide\\8. 实际项目参考\\教程项目\\主动发送消息.md',
   'C:\\Users\\huany\\Desktop\\Projects\\QQ-Bot\\docs.ncatbot.xyz\\docs\\notes\\guide\\8. 实际项目参考\\教程项目\\发送合并转发消息.md',
   'C:\\Users\\huany\\Desktop\\Projects\\QQ-Bot\\docs.ncatbot.xyz\\docs\\notes\\guide\\8. 实际项目参考\\教程项目\\发送复杂消息.md',
   'C:\\Users\\huany\\Desktop\\Projects\\QQ-Bot\\docs.ncatbot.xyz\\docs\\notes\\guide\\8. 实际项目参考\\教程项目\\处理好友请求和加群请求.md',
-  'C:\\Users\\huany\\Desktop\\Projects\\QQ-Bot\\docs.ncatbot.xyz\\other\\定时任务插件.md'
+  'C:\\Users\\huany\\Desktop\\Projects\\QQ-Bot\\docs.ncatbot.xyz\\other\\AI-定时任务插件.md'
 ];
 
 // 拼接所有 .md 文件内容

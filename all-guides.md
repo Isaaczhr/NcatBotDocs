@@ -1535,7 +1535,6 @@ await msg.reply(rtf=message)
 ```python
 result = {
   "status": "ok",
-  "retcode": 0,
   "data": {
     "file": "D:\\TencentFiles\\NapCat\\temp\\9f223e466 (1).txt", # 没啥用
     "url": "D:\\TencentFiles\\NapCat\\temp\\9f223e466 (1).txt", # url 指示文件的获取方式，可能是一个本地地址也可能是一个网络地址
@@ -1565,25 +1564,16 @@ result = {
 
 返回指定群聊, 群文件根目录下所有文件和目录的信息.
 
-::: details 返回值示例:
+::: details 返回值示例（省略了部分不重要的数据，如果需要，请自行实验）:
 ```python
 result = {
   "status": "ok",
-  "retcode": 0,
   "data": {
     "files": [
       {
         "group_id": 0,
         "file_id": "string",
         "file_name": "string",
-        "busid": 0,
-        "size": 0,
-        "upload_time": 0,
-        "dead_time": 0,
-        "modify_time": 0,
-        "download_times": 0,
-        "uploader": 0,
-        "uploader_name": "string"
       }
     ],
     "folders": [
@@ -1593,15 +1583,9 @@ result = {
         "folder": "string",
         "folder_name": "string",
         "create_time": "string",
-        "creator": "string",
-        "creator_name": "string",
-        "total_file_count": "string"
       }
     ]
   },
-  "message": "string",
-  "wording": "string",
-  "echo": "string"
 }
 ```
 :::
@@ -1614,21 +1598,13 @@ result = {
 ```python
 {
   "status": "ok",
-  "retcode": 0,
   "data": {
     "files": [
       {
         "group_id": 0,
         "file_id": "string",
         "file_name": "string",
-        "busid": 0,
         "size": 0,
-        "upload_time": 0,
-        "dead_time": 0,
-        "modify_time": 0,
-        "download_times": 0,
-        "uploader": 0,
-        "uploader_name": "string"
       }
     ],
     "folders": [
@@ -1637,16 +1613,9 @@ result = {
         "folder_id": "string",
         "folder": "string",
         "folder_name": "string",
-        "create_time": "string",
-        "creator": "string",
-        "creator_name": "string",
-        "total_file_count": "string"
       }
     ]
   },
-  "message": "string",
-  "wording": "string",
-  "echo": "string"
 }
 ```
 :::
@@ -1765,22 +1734,6 @@ result = {
 - 返回: 一个 `dict` 表示请求响应结果.
 
 示例调用: `bot.api.set_qq_profile("彭彭", "咱好想和木子姐姐贴贴啊喵qwq", "女")`.
-
-示例返回(是一个 Python 的 `dict`):
-
-```json
-{
-  "status": "ok",
-  "retcode": 0,
-  "data": {
-    "result": 0,
-    "errMsg": ""
-  },
-  "message": "这不重要",
-  "wording": "这不重要",
-  "echo": "这不重要"
-}
-```
 
 
 ## 函数原型参考
@@ -2393,16 +2346,6 @@ result = {
 ### 系统接口
 
 ```python
-    async def get_client_key(self):
-        """
-        :return: 获取client_key
-        """
-    
-    async def get_robot_uin_range(self):
-        """
-        :return: 获取机器人QQ号范围
-        """
-    
     async def ocr_image(self, image: str):
         """
         :param image: 图片路径，支持本地路径和网络路径
@@ -2450,35 +2393,11 @@ result = {
         :return: 下载文件
         """
     
-    async def get_cookies(self, domain: str):
-        """
-        :param domain: 域名
-        :return: 获取cookies
-        """
-    
-    async def handle_quick_operation(self, context: dict, operation: dict):
-        """
-        :param context: 事件数据对象
-        :param operation: 快速操作对象
-        :return: 对事件执行快速操作
-        """
-    
-    async def get_csrf_token(self):
-        """
-        :return: 获取 CSRF Token
-        """
-    
     async def del_group_notice(self, group_id: Union[int, str], notice_id: str):
         """
         :param group_id: 群号
         :param notice_id: 通知ID
         :return: 删除群公告
-        """
-    
-    async def get_credentials(self, domain: str):
-        """
-        :param domain: 域名
-        :return: 获取 QQ 相关接口凭证
         """
     
     async def get_model_show(self, model: str):
@@ -2492,11 +2411,6 @@ result = {
         :return: 检查是否可以发送图片
         """
     
-    async def nc_get_packet_status(self):
-        """
-        :return: 获取packet状态
-        """
-    
     async def can_send_record(self):
         """
         :return: 检查是否可以发送语音
@@ -2505,11 +2419,6 @@ result = {
     async def get_status(self):
         """
         :return: 获取状态
-        """
-    
-    async def nc_get_rkey(self):
-        """
-        :return: 获取rkey
         """
     
     async def get_version_info(self):
@@ -2570,17 +2479,6 @@ result = {
     ):
         """
         :param user_id: QQ号
-        :param text: 文本
-        :param face: 表情
-        :param json: JSON
-        :param markdown: Markdown
-        :param reply: 回复
-        :param music: 音乐
-        :param dice: 骰子
-        :param rps: 猜拳
-        :param image: 图片
-        :param rtf: 富文本(消息链)
-        :return: 发送私聊消息
         """
     
     async def post_group_file(
@@ -2613,12 +2511,6 @@ result = {
     ):
         """
         :param user_id: QQ号
-        :param image: 图片
-        :param record: 语音
-        :param video: 视频
-        :param file: 文件
-        :param markdown: Markdown
-        :return: 发送私聊文件
         """
 ```
 
@@ -3953,7 +3845,6 @@ bot.run()
 title: LLM_API 插件项目
 creatTime: 2025/03/27 10:07:54
 permalink: /guide/llmapipl/
-createTime: 2025/03/26 00:51:46
 ---
 
 ## 介绍
@@ -4001,7 +3892,7 @@ LLM_API 插件不直接提供大语言模型对话服务, 而是提供基于事�
 - url: `/cfg LLM_API.url <your url>` 基准 url。
 - model: `/cfg LLM_API.model <your model>` 模型名。
 
-例如 [Kimi](https://platform.moonshot.cn/docs/guide/migrating-from-openai-to-kimi#%E5%85%B3%E4%BA%8E-api-%E5%85%BC%E5%AE%B9%E6%80%A7):
+例如 Kimi
 
 ```
 url: https://api.moonshot.cn/v1
@@ -4020,8 +3911,6 @@ api: <KEY>
 from ncatbot.plugin import BasePlugin, CompatibleEnrollment, Event
 from ncatbot.core import GroupMessage, PrivateMessage
 import asyncio
-import httpx
-import openai
 from concurrent.futures import ThreadPoolExecutor
 
 DEFAULT_URL = "url"
@@ -4083,53 +3972,6 @@ class LLM_API(BasePlugin):
         print(f"{self.name} 插件已卸载")
 ```
 
-## 解析
-
-### on_load
-
-```python
-async def on_load(self):
-    print(f"{self.name} 插件已加载")
-    print(f"插件版本: {self.version}")
-    self.register_config("url", DEFAULT_URL)
-    self.register_config("api", DEFAULT_API)
-    self.register_config("model", DEFAULT_MODEL) # 注册三个配置项
-    self.register_handler("LLM_API.main", self.main) # 注册事件(Event)处理器
-    self.register_admin_func("test", self.test, raw_message_filter="/tllma", permission_raise=True) # 注册一个管理员功能, 需要提权以便在普通群聊中触发
-```
-
-- 通过 `register_config` 注册所需要的配置项，配置项在**正常退出**时会保存，下次运行时自动加载。所有的配置项都需要在 `on_load` 中完成注册。
-- 通过 `register_handler` 注册事件处理器。事件总线在收到 `LLM_API.main` 事件时会调用 `self.main` 函数。
-- 通过 `register_admin_func` 注册一个管理员功能，功能的作用域只包括群聊和私聊，收到 `/tllma` 消息时，会进行鉴权，如果鉴权通过，则调用 `self.test` 函数。
-
-### self.main
-
-```python
-async def main(self, event: Event):
-    # 省略逻辑
-    event.add_result({
-        "text": "你好",
-        "status": 200,
-        "error": ""
-    })
-```
-
-- `self.main` 是插件服务的提供者，其它插件通过发布 `LLM_API.main` 事件来获得 `self.main` 提供的服务。
-- 通过 `event.add_result` 来添加事件处理结果，这个结果可以被事件发布者获取。
-
-### self.test
-
-```python
-async def test(self, message: PrivateMessage):
-    result = (await self.publish_async(Event("LLM_API.main", {
-        # 此处省略大模型调用参数的构造
-    })))[0]
-    await message.reply(text=result["text"] + result['error'])      
-```
-
-- `self.publish_async` 是 `BasePlugin` 类提供的发布事件的方法。通过该方法向事件总线发布事件。
-- 事件总线收到 `LLM_API.main` 事件，调用 `self.main` 函数（所有订阅了该事件的处理器），`self.main` 添加事件处理结果。接着用 `(await self.publish_async(...))` 获取所有的事件处理结果。
-- 只有一个处理器为该事件添加了结果，所以使用 `(await self.publish_async(...))[0]` 获取结果，再根据插件文档的说明正确解读。
 
 ---
 title: 上传和获取文件
