@@ -241,6 +241,10 @@ permalink: /guide/wininsta/
 
 运行你的第一个 Bot !
 
+::: warning
+如果使用**服务器**部署，**强烈不建议**使用 Windows Server，建议使用基于 Ubuntu 操作系统的服务器。
+:::
+
 ## 任务列表
 
 我们给出一个简单的任务清单, 你可以按照下面的步骤来安装 NcatBot.
@@ -2439,12 +2443,16 @@ result = {
   "retcode": 0,
   "data": {
     "file": "D:\\TencentFiles\\NapCat\\temp\\9f22cb6d-8d62-4323-9b78-60621533e466 (1).txt", # 没啥用
-    "url": "D:\\TencentFiles\\NapCat\\temp\\9f22cb6d-8d62-4323-9b78-60621533e466 (1).txt", # url 可能是一个本地地址也可能是一个网络地址
+    "url": "D:\\TencentFiles\\NapCat\\temp\\9f22cb6d-8d62-4323-9b78-60621533e466 (1).txt", # url 指示文件的获取方式，可能是一个本地地址也可能是一个网络地址
     "file_size": "35",
     "file_name": "9f22cb6d-8d62-4323-9b78-60621533e466.txt"
     },
 }
 ```
+
+::: warning
+很多时候返回的 url 是一个本地路径，因为已经自动下载较小的文件到本地。如果 NapCat 和 NcatBot 不在同一台机器，还需要做额外的处理。
+:::
 
 ### 文件直接被发送
 
@@ -2559,9 +2567,12 @@ def on_group_msg(msg: GroupMessage):
   for message_seg in message_segs:
     if message_seg['type'] == "file":
       file_id = message_seg["data"]["file_id"]
-      url = bot.api.get_file_sync(file_id)['data']['url']
-      print("文件的获取链接是:", url)
+      file_source = bot.api.get_file_sync(file_id)['data']['url']
+      print("文件的获取途径是:", file_source)
 ```
+
+如果需要获取的文件已经存在于本地, 则 file_source 是一个绝对路径(有时候会自动下载到本地, 所以有时候不主动下载也会返回路径)
+
 
 ---
 title: 其它 API 介绍
@@ -3865,17 +3876,6 @@ chatgpt 和 grok 也有很好的效果，但不推荐使用国内的其它大语
 
 
 
-## 配置 VSCode 的 Python 开发环境
-
-### 安装 VSCode
-
-### 安装 VSCode 插件
-
-### 创建工作区
-
-### 使用 VSCode 运行示例机器人
-
-## 使用 AI 开发
 
 
 
