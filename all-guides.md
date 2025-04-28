@@ -109,7 +109,7 @@ sudo dnf install -y epel-release && sudo dnf install --allowerasing -y zip unzip
 
 NcatBot 需要使用 `3000`、`3001`、`6099` 三个端口, 请确保你的**服务器**以及**系统**均已经放通了这三个端口.
 
-`3000` 的需求并非强制的, 可以忽略, `3001`, `6099` 分别是默认的 websocket 端口和 WebUI 端口, 必须保证放通. 当然, 你可以通过[配置项](../2.%20基本开发/2.%20配置项.md)修改端口.
+`3000` 的需求并非强制的, 可以忽略, `3001`, `6099` 分别是默认的 websocket 端口和 WebUI 端口, 必须保证放通. 当然, 你可以通过[配置项](../2.%20基本开发/4.%20配置项.md)修改端口.
 
 ### 服务器防火墙
 
@@ -117,7 +117,7 @@ NcatBot 需要使用 `3000`、`3001`、`6099` 三个端口, 请确保你的**服
 
 如果 NcatBot 和 NapCat 都在同一个服务器上, 一般可以省略这一步.
 
-NcatBot 和 NapCat 的关系查看[简单认识](../5.%20杂项/1.%20认识%20NcatBot.md).
+[NcatBot 和 NapCat 的关系](../5.%20杂项/1.%20认识%20NcatBot.md#NcatBot-和-NapCat-的关系).
 
 ### 系统防火墙
 
@@ -182,37 +182,33 @@ sudo firewall-cmd --reload
 - 一个 QQ 号称为 **Bot**, Bot 一般是小号, 它**由 NcatBot 控制**.
 - 另一个 QQ 号称为 **root**, root 一般是大号, 由你自己控制, 拥有管理 Bot 的权限.
 
+NcatBot 相当于一个电脑 QQ 客户端，为了避免重复登录，请在电脑上退出 Bot QQ 的登录。
+
 ### 执行代码
 
-1. 复制以下代码(==记得把代码中的 `bot_uin` 改成 Bot 的 QQ 号, 把 `root` 改成你的 QQ 号==), 保存到工作目录下 `main.py` 中.
+1. 复制以下代码(==记得把代码中的 `bt_uin` 改成 Bot 的 QQ 号, 把 `root` 改成你的 QQ 号==), 保存到工作目录下 `main.py` 中.
 
 2. 在终端中输入 `python3 main.py` 执行代码, 执行过程中可能会提示**需求重启服务(紫色页面)**, 参考[FAQ](../7.%20常见问题/1.%20安装时常见问题.md) 操作.
 
-3. 如果是第一次执行, 可能会弹出一个窗口询问是否允许修改, ==选择是==. 之后会弹出==另一个窗口==, 等待一段时间后, 会显示二维码. 扫码时, 需要在**手机上先登录 Bot QQ 号**, 用手机扫码登录.
-
-4. 扫码登录完成并提示 `Bot 启动成功` 后, 用 **root** QQ 号向你的 **Bot** QQ 号 ==私聊==发送一句 `测试`, 收到 `NcatBot 测试成功喵~` 的消息, 说明 NcatBot 已经成功运行起来了!
+3. 扫码登录完成并提示 `Bot 启动成功` 后, 用 **root** QQ 号向你的 **Bot** QQ 号 ==私聊==发送一句 `测试`, 收到 `NcatBot 测试成功喵~` 的消息, 说明 NcatBot 已经成功运行起来了!
 
 ::: code-tabs
 @tab Python
 ```python
+# ========= 导入必要模块 ==========
 from ncatbot.core import BotClient, GroupMessage, PrivateMessage
-from ncatbot.utils import config
 from ncatbot.utils import get_log
 
+# ========== 创建 BotClient ==========
+bot = BotClient()
 _log = get_log()
 
-config.set_bot_uin("123456")  # 设置 bot qq 号 (必填)
-config.set_root("123456")  # 设置 bot 超级管理员账号 (建议填写)
-
-bot = BotClient()
-
-
+# ========= 注册回调函数 ==========
 @bot.group_event()
 async def on_group_message(msg: GroupMessage):
     _log.info(msg)
     if msg.raw_message == "测试":
         await msg.reply(text="NcatBot 测试成功喵~")
-
 
 @bot.private_event()
 async def on_private_message(msg: PrivateMessage):
@@ -220,9 +216,9 @@ async def on_private_message(msg: PrivateMessage):
     if msg.raw_message == "测试":
         await bot.api.post_private_msg(msg.user_id, text="NcatBot 测试成功喵~")
 
-
+# ========== 启动 BotClient==========
 if __name__ == "__main__":
-    bot.run()
+    bot.run(bt_uin="123456") # 这里写 Bot 的 QQ 号
 ```
 :::
 
@@ -238,7 +234,7 @@ if __name__ == "__main__":
 
 
 ---
-title: Window 安装
+title: Windows 安装
 createTime: 2025/02/07 15:21:39
 permalink: /guide/wininsta/
 ---
@@ -271,8 +267,6 @@ permalink: /guide/wininsta/
 
 项目已经发布到 PYPI, 可以使用 pip 直接下载本项目.
 
-另外, 如果你下载过 github 上的 .zip 压缩文件并解压出来过, 请**删掉它们**.
-
 按下 `Win+R`, 在左下角打开**运行**, 输入 `powershell` 并回车, 打开**终端**.
 
 复制下面的代码, 粘贴到**终端**中, 按回车执行.
@@ -297,6 +291,8 @@ pip install git+https://github.com/liyihao1110/ncatbot.git
 ```
 
 :::
+
+如果你下载过 github 上的 .zip 压缩文件并解压出来过, 请**删掉它们**.
 
 如果出现**红色**的错误信息, 例如:
 
@@ -333,7 +329,7 @@ print(ncatbot.__version__)
 
 :::
 
-如果输出了版本号, 例如 `3.5.9`, 则说明安装成功.
+如果输出了版本号, 例如 `3.7.10r1`（2025.4.28）则说明安装成功。
 
 ### 检查 QQ 版本
 
@@ -362,13 +358,13 @@ NcatBot 需要 QQ 版本至少达到 `9.9.18` 才能正常运行, 如果你不�
    ::: details 方法一
       1. 在==文件夹中打开终端==(右键这个文件夹的空白区域, 选择 "在终端中打开"), 输入 `python` 并回车打开 ==Python 交互终端==.
 
-      2. 复制执行下面的代码(==记得把代码中的 `bot_uin` 改成 **Bot** QQ 号, 把 `root` 改成 **root** QQ 号==)并回车执行. 
+      2. 复制执行下面的代码(==记得把代码中的 `bt_uin` 改成 **Bot** QQ 号, 把 `root` 改成 **root** QQ 号==)并回车执行. 
    :::
 
    ::: details 方法二
-      1. 在文件夹中创建一个新文件, 名为 `main.py`, 注意文件的[后缀名]()是 `.py`.
+      1. 在文件夹中创建一个新文件, 名为 `main.py`, 注意文件的[后缀名](https://zhuanlan.zhihu.com/p/112226609)是 `.py`.
    
-      2. 用**记事本等文本编辑器**打开 `main.py` 文件, 复制下面的代码, 粘贴进去, 并==记得把代码中的 `bot_uin` 改成 **Bot** QQ 号, 把 `root` 改成 **root** QQ 号==
+      2. 用**记事本等文本编辑器**打开 `main.py` 文件, 复制下面的代码, 粘贴进去, 并==记得把代码中的 `bt_uin` 改成 **Bot** QQ 号, 把 `root` 改成 **root** QQ 号==
    
       3. Ctrl+S **保存**.
        
@@ -376,7 +372,7 @@ NcatBot 需要 QQ 版本至少达到 `9.9.18` 才能正常运行, 如果你不�
    :::
 
 
-3. 如果是第一次执行, 可能会弹出一个窗口询问是否允许修改, ==选择是==. 之后会弹出==另一个窗口==, 等待一段时间后, 会显示二维码. 扫码时, 需要在**手机上先登录 Bot QQ 号**, 用手机扫码登录.
+3. 如果是第一次执行, 可能会弹出一个窗口询问是否允许修改, ==选择是==. 等待一段时间后, 会显示二维码. 扫码时, 需要在**手机上先登录 Bot QQ 号**, 用手机扫码登录.
 
 4. 用 **root** QQ 号向你的 **Bot** QQ 号 ==私聊==发送一句 `测试`, 收到 `NcatBot 测试成功喵~` 的消息, 说明 NcatBot 已经成功运行起来了!
 
@@ -387,24 +383,20 @@ NcatBot 需要 QQ 版本至少达到 `9.9.18` 才能正常运行, 如果你不�
 @tab python
 
 ```python
+# ========= 导入必要模块 ==========
 from ncatbot.core import BotClient, GroupMessage, PrivateMessage
-from ncatbot.utils import config
 from ncatbot.utils import get_log
 
+# ========== 创建 BotClient ==========
+bot = BotClient()
 _log = get_log()
 
-config.set_bot_uin("123456")  # 设置 bot qq 号 (必填)
-config.set_root("123456")  # 设置 bot 超级管理员账号 (建议填写)
-
-bot = BotClient()
-
-
+# ========= 注册回调函数 ==========
 @bot.group_event()
 async def on_group_message(msg: GroupMessage):
     _log.info(msg)
     if msg.raw_message == "测试":
         await msg.reply(text="NcatBot 测试成功喵~")
-
 
 @bot.private_event()
 async def on_private_message(msg: PrivateMessage):
@@ -412,16 +404,20 @@ async def on_private_message(msg: PrivateMessage):
     if msg.raw_message == "测试":
         await bot.api.post_private_msg(msg.user_id, text="NcatBot 测试成功喵~")
 
-
+# ========== 启动 BotClient==========
 if __name__ == "__main__":
-    bot.run()
-
+    bot.run(bt_uin="123456") # 这里写 Bot 的 QQ 号
 ```
 
 :::
 
 
 ## 5. 常见问题
+
+### 无法识别到Napcat的存在（Windows）
+
+请检查你的**Napcat**文件夹是否在你的项目文件夹里，如果存在请检查你是否使用了**Napcat**一键安装脚本.
+如果是通过一键脚本安装的请删除相关文件并手动安装**Napcat.Shell**版本.
 
 ### 连接 WebSocket 服务器超时
 
@@ -440,6 +436,7 @@ if __name__ == "__main__":
 ### 更多
 
 请查阅 [FAQ](../7.%20常见问题/1.%20安装时常见问题.md) 以了解更多常见问题.
+
 
 ---
 title: MacOS 安装
@@ -540,6 +537,7 @@ permalink: /guide/minimali/
 - 操作系统：
   - Windows 
     - 将直接使用系统 QQ, 请自行安装好 QQ >= 9.9.16.18 (2024 年 8 月之后安装的 QQ 都可以使用)。
+    - 不建议使用 Windows Server
   - Linux
     - 理论上支持所有发行版, 但推荐 Ubuntu 22.04 LTS。
     - 安装好 curl。
@@ -556,9 +554,11 @@ pip install ncatbot -U -i https://mirrors.aliyun.com/pypi/simple/
 ```python
 from ncatbot.core import BotClient
 bot = BotClient()
-api = BotClient.run_blocking(bt_uin="123456", root="234567")
-api.post_private_msg("345678", "Hello NcatBot~meow")
+api = BotClient.run_blocking(bt_uin="123456", root="234567") # bt_uin 为 bot 的 QQ 号（一般填你的小号）, root 为 机器人管理员的 QQ 号（一般填你的大号）
+api.post_private_msg("345678", "Hello NcatBot~meow") # 第一个参数表示发送消息的对象（QQ 号）
 ```
+
+- NcatBot 组件中内置一个 QQ 客户端，请不要自行在电脑上登录 `bt_uin`。
 
 ---
 title: 开发指南
@@ -569,13 +569,12 @@ permalink: /guide/devguide/
 
 ## NcatBot 的几种开发范式
 
-### 主动模式
+### 主动模式（原先叫嵌入模式）
 
 主动模式下，进程的管理权限由你持有。使用 `BotClient.run_blocking()` 方法启动，该方法会返回一个 `BotAPI` 实例，通过该实例可以调用 NcatBot 提供的接口。退出时需要使用 `BotClient.exit()` 方法通知 NcatBot 完成退出操作。再结束进程。
 
 主动模式下，NcatBot 就是一个普通的第三方模块，你可以按照任何你喜欢的方式布局你的项目。
 
-主动模式参考：
 
 ### 插件模式
 
@@ -583,53 +582,42 @@ permalink: /guide/devguide/
 
 插件项目是 NcatBot 的核心, 也是 NcatBot 的主要开发范式. 插件项目有**一定的目录结构要求和命名规范要求**. 与之对应的, 插件项目具有**便利的功能支持**和**丰富的社区生态**, 通过插件项目, 可以开发出功能强大, 分发容易的 QQ 机器人.
 
-从 [了解 NcatBot 插件](../6.%20开发%20NcatBot%20插件/1.%20了解%20NcatBot%20插件.md) 开始, 阅读插件开发的文档.
-
-插件模式参考：
-
-- [LLM_API 插件项目](../8.%20实际项目参考/2.%20LLM_API%20插件项目.md).
-
 ### 一些澄清
 
-主动模式和插件模式唯一的区别是**控制权所属**。主动模式下，只要调用了 `BotClient.run_blocking()` 方法，就会加载工作目录下 `plugins/` 中的插件。NcatBot 及其插件被抽象为一个 `BotClient` 实例。
+主动模式和插件模式唯一的区别是**控制权所属**。主动模式下，只要调用了 `BotClient.run_blocking()` 方法，也会加载工作目录下 `plugins/` 中的插件。NcatBot 及其插件被抽象为一个 `BotClient` 实例。
 
 ## 从实际项目快速了解
 
-- [主动发送消息]
-- [处理好友请求和加群请求]
-- [发送包含图片、表情、文字、At、回复的复杂消息]
-- [发送合并转发消息]
-- [上传和获取文件]
-- [定时任务]
+- [主动发送消息](../8.%20实际项目参考/教程项目/主动发送消息.md)
+- [处理好友请求和加群请求](../8.%20实际项目参考/教程项目/处理好友请求和加群请求.md)
+- [发送包含图片、表情、文字、At、回复的复杂消息](../8.%20实际项目参考/教程项目/发送复杂消息.md)
+- [发送合并转发消息](../8.%20实际项目参考/教程项目/发送合并转发消息.md)
+- [上传和获取文件](../8.%20实际项目参考/教程项目/上传和获取文件.md)
+- [定时任务](../8.%20实际项目参考/教程项目/定时任务插件.md)
 
 ## 学习路径
 
 - 阅读你操作系统的安装方式.
-- 阅读 [示例代码解析](../2.%20基本开发/1.%20示例代码解析.md).
-
-### 开发插件项目
-
+- 阅读对应的最小示例.
+  - [插件模式最小示例](../2.%20基本开发/1.%20插件模式最小示例.md)
+  - [主动模式最小示例](../2.%20基本开发/1.%20主动模式最小示例.md)
 - 阅读[回调函数](../3.%20事件处理/1.%20回调函数.md)部分, 了解回调函数参数的数据格式.
-- 重点阅读:
-  - [了解 NcatBot 插件](../6.%20开发%20NcatBot%20插件/1.%20了解%20NcatBot%20插件.md)
-  - [插件的加载和卸载](../6.%20开发%20NcatBot%20插件/2.%20插件的加载和卸载.md)
-  - [事件的发布和订阅](../6.%20开发%20NcatBot%20插件/3.%20插件的交互系统/3.1%20事件的发布和订阅.md)
-  - [注册功能](../6.%20开发%20NcatBot%20插件/3.%20插件的交互系统/3.2%20注册功能.md)
-  - [权限系统](../6.%20开发%20NcatBot%20插件/3.%20插件的交互系统/3.3%20权限系统.md)
-  - [内置功能](../6.%20开发%20NcatBot%20插件/3.%20插件的交互系统/3.4%20内置功能.md)
-  - [发布你的插件](../6.%20开发%20NcatBot%20插件/5.%20发布你的插件.md)
-- 学习示例插件项目:
-  - [LLM_API 插件项目](../8.%20实际项目参考/2.%20LLM_API%20插件项目.md)
 - 阅读[事件上报](../3.%20事件处理/2.%20事件上报.md), 了解能够监听和处理的事件类型.
-- 补充学习: 按照文档导航补充学习其它知识, 或者使用文档项目的搜索功能.
+- 阅读[API 调用](../4.%20API%20参考/1.%20API%20调用.md), 了解如何调用 NcatBot 提供的 API.
 
-### 开发 BotClient 项目
+### 插件模式
 
-- 仔细阅读 [回调函数](../3.%20事件处理/1.%20回调函数.md), 明确如何注册回调函数.
-- 学习示例插件项目:
-  - [简单 BotClient 项目](../8.%20实际项目参考/1.%20简单%20BotClient%20项目.md)
-- 阅读[事件上报](../3.%20事件处理/2.%20事件上报.md), 了解能够监听和处理的事件类型.
-- 补充学习: 按照文档导航补充学习其它知识, 或者使用文档项目的搜索功能.
+- [了解 NcatBot 插件](../6.%20开发%20NcatBot%20插件/1.%20了解%20NcatBot%20插件.md)
+- [插件的加载和卸载](../6.%20开发%20NcatBot%20插件/2.%20插件的加载和卸载.md)
+- [事件的发布和订阅](../6.%20开发%20NcatBot%20插件/3.%20插件的交互系统/3.1%20事件的发布和订阅.md)
+- [注册功能](../6.%20开发%20NcatBot%20插件/3.%20插件的交互系统/3.2%20注册功能.md)
+- [权限系统](../6.%20开发%20NcatBot%20插件/3.%20插件的交互系统/3.3%20权限系统.md)
+- [内置功能](../6.%20开发%20NcatBot%20插件/3.%20插件的交互系统/3.4%20内置功能.md)
+- [发布你的插件](../6.%20开发%20NcatBot%20插件/5.%20发布你的插件.md)
+
+### 主动模式
+
+- [主动模式开发](../2.%20基本开发/5.%20主动模式开发.md)
 
 
 ## 文档导航
@@ -737,16 +725,12 @@ permalink: /guide/inplugin/
 例如查看[插件列表](https://github.com/ncatbot/NcatBot-Plugins/tree/main/plugins)找到已有的插件 `TestPlugin` 后, 可以使用 `install TestPlugin` 命令安装插件.
 
 ---
-title: 示例代码解析
+title: 插件模式最小示例
 createTime: 2025/02/08 10:07:54
-permalink: /guide/k4qzlkxe/
+permalink: /guide/minexample/
 ---
 
-NcatBot 是如何运作的？
-
-## 最小示例
-
-### 代码 
+## 源代码 
 
 ::: code-tabs
 @tab python
@@ -754,19 +738,13 @@ NcatBot 是如何运作的？
 ```python
 # ========= 导入必要模块 ==========
 from ncatbot.core import BotClient, GroupMessage, PrivateMessage
-from ncatbot.utils import config
 from ncatbot.utils import get_log
-
-# ========== 设置配置项 ==========
-config.set_bot_uin("123456")  # 设置 bot qq 号 (必填)
-config.set_root("123456")  # 设置 bot 超级管理员账号 (建议填写)
 
 # ========== 创建 BotClient ==========
 bot = BotClient()
-
-# ========= 注册回调函数 ==========
 _log = get_log()
 
+# ========= 注册回调函数 ==========
 @bot.group_event()
 async def on_group_message(msg: GroupMessage):
     _log.info(msg)
@@ -781,9 +759,11 @@ async def on_private_message(msg: PrivateMessage):
 
 # ========== 启动 BotClient==========
 if __name__ == "__main__":
-    bot.run()
+    bot.run(bt_uin="123456")
 ```
 :::
+
+## 代码分析
 
 ### 导入必须的模块
 
@@ -791,33 +771,17 @@ if __name__ == "__main__":
 @tab python
 
 ```python
-from ncatbot.core import BotClient
-from ncatbot.core import GroupMessage, PrivateMessage
-from ncatbot.utils import config
+from ncatbot.core import BotClient, GroupMessage, PrivateMessage
 from ncatbot.utils import get_log
 ```
 
 :::
 
-导入部分分为 4 段, 分别是:
+导入部分分为 3 段, 分别是:
 
 1. 导入 `BotClient` 类, 用于创建一个 bot 实例, NcatBot 的**所有接口和功能**都封装在这个类中.
 2. 导入 `GroupMessage` 和 `PrivateMessage` 类, 用于==类型注解==, 方便使用 IDE 的代码补全功能.
 3. 导入 `get_log` 函数, 用于获取日志实例, 输出==日志信息==方便调试.
-4. 导入 `config` 模块, 用于配置 bot 的相关参数.
-
-### 设置配置项
-
-::: code-tabs
-@tab python
-```python
-# ========== 设置配置项 ==========
-config.set_bot_uin("123456")  # 设置 bot qq 号 (必填)
-config.set_root("123456")  # 设置 bot 超级管理员账号 (建议填写)
-```
-:::
-
-请参阅[配置项](../2.%20配置项.md).
 
 ### 创建 bot 实例
 
@@ -826,65 +790,66 @@ config.set_root("123456")  # 设置 bot 超级管理员账号 (建议填写)
 ```python
 # ========== 创建 bot 实例 ==========
 bot = BotClient() # 创建一个 BotClient 实例
+_log = get_log() # 获取日志实例, 输出日志信息方便调试
 ```
 :::
-
 
 ::: warning
 NcatBot 要求, 一个独立的**进程**只能==创建唯一一个 BotClient 实例==.
 :::
 
-### 注册回调函数
+### 注册回调函数(可选)
 
 ::: code-tabs
 @tab python
-
 ```python
 # ========= 注册回调函数 ==========
-_log = get_log() # 获取日志实例, 输出日志信息方便调试
-@bot.group_event()
-async def on_group_message(msg: GroupMessage):
-    _log.info(msg) # 打印收到的消息到日志中
-    if msg.raw_message == "测试":
-        await msg.reply("NcatBot 测试成功喵~")
-
 @bot.private_event()
 async def on_private_message(msg: PrivateMessage):
     _log.info(msg)
     if msg.raw_message == '测试':
         await bot.api.post_private_msg(msg.user_id, text="NcatBot 测试成功喵~")
-```
 
+@bot.group_event()
+async def on_group_message(msg: GroupMessage):
+    _log.info(msg) # 打印收到的消息到日志中
+    if msg.raw_message == "测试":
+        await msg.reply("NcatBot 测试成功喵~")
+```
 :::
 
-使用 decorator `@bot.group_event()` 和 `@bot.private_event()` 来注册事件==回调函数==, 回调函数用于处理与之绑定的事件. 注意, ==回调函数必须定义为异步函数==, 也就是用 `async def` 来定义.
+在函数前面添加 `@bot.group_event()` 或 `@bot.private_event()` 来注册==回调函数==。
 
-==回调函数==会在相应的事件发生后被调用, 例如这里的例子, 当用户在私聊中==发送任意消息==时, 都会调用 `on_private_message` 函数, 并将 `msg` 作为参数传入.
+==回调函数==会在相应的事件发生后被调用, 回调函数的参数包含了对应事件的信息。这里，当 Bot 收到私聊的消息时，会调用 `on_private_message` 函数, 并且将收到的消息作为参数传入。
 
-在 `on_private_message` 中, 编写了一些逻辑, 这里的逻辑是如果文本为 `测试` 时, ==调用 API== 向用户发送一条 `NcatBot 测试成功喵~` 的消息.
+在 `on_private_message` 中, 可以自行编写逻辑。 在这里，如果文本是 `测试`, 则==调用 API== 向用户发送一条 `NcatBot 测试成功喵~` 的消息。
 
-在 `on_group_message` 中逻辑相同, 但是直接使用了==简化的 API 调用==方式来发送信息.
+在 `on_group_message`，直接使用了==简化的 API 调用==方式来发送信息.
 
-关于==回调函数的定义和参数==, 请查阅[回调函数](../3.%20事件处理/1.%20回调函数.md).
+关于==回调函数的定义和参数==, 请查阅[回调函数](../3.%20事件处理/1.%20回调函数.md#什么是回调函数).
 
-关于==能够支持的事件==, 请查阅[事件上报](../3.%20事件处理/2.%20事件上报.md).
+关于==能够支持的事件==, 请查阅[事件上报](../3.%20事件处理/2.%20事件上报.md#官方事件发生的条件).
 
-关于==调用 API 发送消息==, 请查阅[API 调用](../4.%20API%20参考/1.%20API%20调用.md).
+关于==调用 API 发送消息==, 请查阅[API 调用](../4.%20API%20参考/1.%20API%20调用.md#介绍).
 
-### 运行部分
+### 运行
 
 ::: code-tabs
 @tab python
 ```python
 # ========== 启动 BotClient==========
 if __name__ == "__main__":
-    bot.run()
+    bot.run(bt_uin="123456")
 ```
 :::
 
-**NcatBot** 默认会在同一台电脑上运行 **NapCat** 服务, 我们也**只建议这么做**. [了解 NcatBot 和 NapCat 的关系](../5.%20杂项/1.%20认识%20NcatBot.md).
+执行 `bot.run()` 时，会在工作目录下 `plugins/` 中查找并加载插件。`bot.run()` 会阻塞整个线程，直到 `Ctrl+C` 触发退出流程**退出整个进程**。
+
+**NcatBot** 默认会在同一台电脑上运行 **NapCat** 服务, 我们也**只建议这么做**. [了解 NcatBot 和 NapCat 的关系](../5.%20杂项/1.%20认识%20NcatBot.md#NcatBot-和-NapCat-的关系).
 
 如果硬要把 NcatBot 和 NapCat 分开, 查阅[使用远端 NapCat 接口](../5.%20杂项/2.%20使用远端%20napcat%20接口.md).
+
+[了解 NcatBot 生命周期](./3.%20NcatBot%20生命周期.md)
 
 ::: details 对初学者的提醒
 在 Python 中, 每个模块都有一个特殊的内置变量 `__name__`. 它的值取决于模块是如何被运行的:
@@ -899,8 +864,76 @@ if __name__ == "__main__":
 尽管在这里 `if __name__ == '__main__':` 并不是必须的, 因为 `main.py` 一定会被直接运行, 但这不失为一种良好的编程习惯.
 :::
 
+---
+title: 主动模式最小示例
+createTime: 2025/04/28 10:54:49
+permalink: /guide/activemode/
+---
 
-## NcatBot 生命周期
+## 源代码
+
+```python
+import time
+from ncatbot.core import BotClient
+
+bot = BotClient()
+bot.add_private_event_handler(lambda e: e.reply_sync("你好"))
+
+api = bot.run_blocking(bt_uin="123456", root="1234567") # 启动 NcatBot, NcatBot 接口可用时返回 API 实例
+api.post_private_msg_sync(12345678, "你好") # 此时 NcatBot 已经启动完成, 可以正常使用接口
+time.sleep(1000)
+
+bot.exit()
+print("退出")
+```
+
+## 代码分析
+
+### 添加回调函数(可选)
+
+```python
+bot.add_private_event_handler(lambda e: e.reply_sync("你好"))
+```
+
+这里使用了 `BotClient.add_private_event_handler` 添加了一个私聊事件回调函数, 当收到私聊消息时, 会调用这个 `lambda` 匿名函数。
+
+`lambda` 匿名函数中使用了**同步接口**。
+
+也可以用[修饰器语法](./1.%20插件模式最小示例.md#注册回调函数(可选))来添加回调函数。
+
+::: tip
+两种添加方式都支持同步和异步回调函数，如果你不熟悉 Python 异步，可以先使用同步语法。同步接口的名称均为 `<异步接口名>_sync`。
+:::
+
+### 运行
+
+```python
+api = bot.run_blocking(bt_uin="123456", root="1234567") # 启动 NcatBot, NcatBot 接口可用时返回 API 实例
+api.post_private_msg_sync(12345678, "你好") # 此时 NcatBot 已经启动完成, 可以正常使用接口, 第一参数为目标 QQ 号。
+time.sleep(1000)
+```
+
+这里使用了 `BotClient.run_blocking` 启动 NcatBot，它返回一个 `BotAPI` 实例 `api`，可以通过 `api` [调用 NcatBot 接口](../4.%20API%20参考/1.%20API%20调用.md)。
+
+返回 `api` 后，立刻调用 ``api.post_private_msg_sync(12345678, "你好")`` 向用户 12345678 发送一条 `你好` 私聊消息。
+
+`time.sleep(1000)` 用于阻塞主线程，NcatBot 系统运行在另一个线程，可以监听事件，在收到私聊消息时调用回调函数回复 `你好`。
+
+### 退出
+
+```python
+bot.exit()
+```
+
+主动模式需要自行调用 `BotClient.exit` 退出 NcatBot 系统。不正常退出会导致插件的可持久化数据无法保存。
+
+---
+title: NcatBot 生命周期
+createTime: 2025/02/08 10:07:54
+permalink: /guide/lifespan/
+---
+
+## 简介
 
 NcatBot 的生命周期按照时间顺序分为以下几步:
 
@@ -911,10 +944,10 @@ NcatBot 的生命周期按照时间顺序分为以下几步:
 - 运行
 - 退出
 
-### 引导
+## 引导
 
 1. 导入必要的模块
-2. 设置配置项
+2. 设置配置项(可选)
 3. 创建 BotClient 实例
    1. 检查配置项是否合法, 检查是否已经创建过 BotClient 实例.
    2. 初始化 BotAPI.
@@ -924,27 +957,29 @@ NcatBot 的生命周期按照时间顺序分为以下几步:
 4. 注册回调函数(可选)
 5. 启动 BotClient 实例
 
-以上过程称为**启动**, 用于**启动**的代码称作**引导程序**. 上面的代码就是一个**引导程序**.
+以上过程称为**引导**，用于**引导**的代码称作**引导程序**。
 
-因此, 无论是插件项目还是 BotClient 项目, 都需要运行**引导程序**来启动.
+[插件模式引导](./1.%20插件模式最小示例.md#运行)
+[主动模式引导](./2.%20主动模式最小示例.md#运行)
 
-### 环境检查
+## 环境检查
 
-环境检查发生在调用 `BotClient.run()` 时.
+环境检查发生在调用 `BotClient.run()` 或者 `BotClient.run_blocking()` 时，包含以下步骤：
 
-1. 检查 NcatBot 是否通过 pip 安装, 检查 NcatBot 是否有新版本可用, 在 `BotClient.run()` 中指定 `debug=True` 可以跳过检查.
-2. 检查 `ws_uri` 中指定的 NapCat 服务是否能被连接并且可用, 如果可用直接跳过本部分以及下一部分, 直接进行插件加载.
-3. 检查 NapCat 是否被正确安装, 见 NapCat 是否有新版本可用, 如果没有安装或者有新版本, 则询问是否安装或更新.
-4. 安装或更新 NapCat.(可选)
-5. 配置 NapCat, 自动配置 NapCat 的各项内容, 以便 NcatBot 能正常连接 NapCat 服务. ==如果你自行改动了 NapCat 配置, NcatBot 会直接覆盖掉你的修改==.
+1. **检查 NcatBot 安装**：检查 NcatBot 是否通过 pip 安装。如果开启了 NcatBot 更新检查，则额外检查 NcatBot 是否有新版本可用，如果有新版本则提醒用户更新。
+2. **检查 NapCat 服务**： 检查 `ws_uri` 中指定的 NapCat 服务是否能被连接并且可用, 如果可用则跳过**环境检查**、 **NapCat 启动**、**引导登录**，进入**确认登录**。
+3. **检查 NapCat 安装**：NapCat 是否被正确安装。
+4. **安装或更新 NapCat**：如果 NapCat 未安装，则安装 NapCat。如果开启了 NapCat 更新检查且 NapCat 有新版本可用, 则在用户确认后更新 NapCat。
+5. **配置 NapCat**： 自动配置 NapCat 的各项内容, 以便 NcatBot 能正常连接 NapCat 服务. ==如果你自行改动了 NapCat 配置, NcatBot 会直接覆盖掉你的修改==.
 
-### 连接 NapCat 服务
+## 连接 NapCat 服务
 
-1. 启动 NapCat 服务, Windows 下会询问是否允许 NapCat 对计算机进行修改, 需要同意.
-2. 引导登录(如果之前本地有登录记录, 则会使用快速登录), 需要扫描二维码登录.
-3. 连接 NapCat 服务.
+1. **启动 NapCat 服务**：Linux 通过命令行启动无感启动 NapCat。Windows 下会询问是否允许 NapCat 对计算机进行修改, 需要同意后才能启动。
+2. **引导登录**：如果之前本地有登录记录，则会使用快速登录。否则需要扫描终端的二维码登录。
+3. **确认登录**：通过 NapCat WebUI 接口确认登录结果，如果登录信息不一致，则终止运行并提醒。
+4. **连接 NapCat 服务**：使用 WebSocket 协议连接到 NapCat 服务。
 
-### 加载插件
+## 加载插件
 
 1. 查找工作目录下的 `plugins` 目录, 读取插件 meta 信息.
 2. 根据插件 meta 中的依赖信息构建加载拓扑图.
@@ -953,19 +988,23 @@ NcatBot 的生命周期按照时间顺序分为以下几步:
    2. 调用插件 `BasePlugin.on_load` 函数, 执行自定义初始化操作.
    3. 事件总线注册**插件功能**和**插件配置项**.
 
-### 运行
+## 运行
 
-1. 启动 WebSocket, 监听来在 NapCat 的事件并上报. 事件对应的回调函数被调用, 同时事件上报到事件总线.
+1. 监听来在 NapCat 的事件并上报. 事件对应的回调函数被调用, 同时事件上报到事件总线.
 2. 处理事件
-   - 事件回调函数直接处理事件.
-   - 事件进入事件总线, 激活功能函数, 并调用订阅了该事件的所有回调函数
+   - 通过 `BotClient` 注册的回调函数对事件做第一次处理。
+   - 事件进入事件总线，激活**功能函数**做第二次处理, 调用订阅了该事件的所有**回调函数**做第三次处理。
 3. 事件被拦截或者被处理
    - 订阅事件的回调函数可以拦截该事件, 阻止其继续传播.
    - 订阅事件的回调函数可以添加事件的处理结果, 以便和其它部分通信.
 
-### 退出
+## 退出
 
-按下 `Ctrl+C` 正常退出后, 进入退出流程, 点 X 关闭属于异常退出, 不会触发退出流程.
+:::warning
+点 X 关闭属于异常退出, 不会触发退出流程。
+:::
+
+插件模式按下 `Ctrl+C` 正常退出，或者主动模式调用对应 `BotClient` 实例的 `exit` 方法, 进入退出流程。
 
 1. 保存权限数据.
 2. 调用 `BasePlugin._unload_` 函数, 完成自定义卸载操作.
@@ -1111,27 +1150,126 @@ config.set_root("123456")
 
 
 ---
-title: AI+NcatBot
-createTime: 2025/03/25 23:21:39
-permalink: /guide/useaidv/
+title: 主动模式开发
+createTime: 2025/04/06 20:00:05
+permalink: /guide/activedev/
 ---
 
-AI 时代已至, 只需要很低的学习成本, 就能够使用 AI 和 NcatBot 开发自己的 QQ 机器人.
+从 3.7.0 版本后, NcatBot 对嵌入开发的支持更加完善，使用 BotClient 类可以方便的将 Ncatbot 作为模块嵌入到你的 Python 项目中.
 
-## 配置 VSCode 的 Python 开发环境
+为了避免歧义，嵌入模式称为**主动模式**。
 
-### 安装 VSCode
+## 适用场景
 
-### 安装 VSCode 插件
+### 对 NcatBot 插件功能依赖一般
 
-### 创建工作区
+目前的插件生态情况, 基本都可以用这个办法.
 
-### 使用 VSCode 运行示例机器人
+推荐以[阻塞启动模式](#阻塞启动模式)启动.
 
-## 使用 AI 开发
+非阻塞模式下, NcatBot 需要手动调用退出函数来退出 NcatBot 以保证可持久化数据的完整性.
+
+### 对 NcatBot 插件功能依赖非常强
+
+如果你的项目高度依赖 NcatBot 插件的完善功能, 推荐以[插件模式](#引导模式)启动, 让 NcatBot 引导程序来管理插件, 你的项目作为守护进程运行.
+
+你需要注意, Ncatbot 在接受 `Ctrl+C` 信号时, 进入退出流程, 你可能需要捕获这些信号以便你的项目也能正常退出.
+
+## 阻塞启动模式(推荐)
+
+`BotClient` 对象提供 `run_blocking` 方法以阻塞模式启动 NcatBot. NcatBot 启动完成后, 会返回一个 `BotAPI` 对象, 该对象提供 NcatBot 的所有接口.
+
+同时提供 `exit` 方法以正常退出 NcatBot, `exit` 方法不会退出进程, 你可以继续做你的事情.
+
+```python
+from ncatbot.core import BotClient
+
+bot = BotClient()
+api = bot.run_blocking(bt_uin="123456", root="1234567") # 启动 NcatBot, NcatBot 接口可用时返回 API 实例
+api.post_private_msg_sync(12345678, "你好") # 此时 NcatBot 已经启动完成, 可以正常使用接口
+bot.exit()
+print("退出")
+```
+
+## 非阻塞启动模式
+
+`BotClient` 对象提供 `run_none_blocking` 方法以非阻塞模式启动 NcatBot.
+
+非阻塞启动的 NcatBot 没有完全准备好, 需要通过以下方式确保其正常运行.
+
+### 提前引导 + sleep
+
+启动 NcatBot 需要一定时间. 
+
+推荐先用引导程序完成一次启动引导, 不要关闭启动的 NapCat 服务. 接着再以非阻塞模式. 此时 NcatBot 将启动快速引导模式, 大约 sleep 10 秒后, NcatBot 就会进入正常运行模式.
+
+此时所有接口均可用.
+
+```python
+import time
+
+from ncatbot.core import BotClient
+
+bot = BotClient()
+bot.run_none_blocking(bt_uin="123456", root="123456") # 在这里指定 QQ 运行参数, 可以替代全局变量 config
+time.sleep(10) # 等待 NcatBot 启动完成
+
+api.post_private_msg_sync(123456, "你好") # 此时 NcatBot 已经启动完成, 可以正常使用接口
+
+```
+
+### STARTUP_EVENT 回调函数 + 锁
+
+`BotClient` 对象提供针对 `startup_event` 事件的回调函数, 以在 NcatBot 接口可用发.
+
+可以通过全局加锁的方式来精确地在 NcatBot 接口可用时执行你的代码.
+
+```python
+from ncatbot.core import BotClient
+from threading import Lock
 
 
+lock = Lock()
+lock.acquire() # 全局加锁
 
+bot = BotClient()
+bot.add_startup_handler(lambda: lock.release()) # 在 NcatBot 接口可用时, 释放全局锁
+api = bot.run_none_blocking(bt_uin="123456", root="123456")
+# 这里可以做点别的事情
+lock.acquire() # 等待 NcatBot 启动完成
+api.post_private_msg_sync(123456, "你好") # 此时 NcatBot 已经启动完成, 可以正常使用接口
+```
+
+## 引导模式
+
+使用正常的 NcatBot 引导程序, 添加一个 startup 回调函数来引导你的项目启动.
+
+你的项目必须以守护进程的形式在**另一个线程**运行.
+
+```python
+from ncatbot.core import BotClient, BotAPI
+from threading import Thread
+
+def start_my_app(api:BotAPI):
+    print("start my app")
+    api.post_private_msg_sync("1234", "你好主动模式")
+
+def start_my_app_warp():
+    th = Thread(
+        target=lambda api=bot.api:start_my_app(api),
+        daemon=True,
+    ) # 守护模式在另一个线程运行
+    th.start()
+
+bot = BotClient()
+bot.add_startup_handler(start_my_app_warp) # NcatBot 启动时调用该回调函数
+bot.run(bt_uin="1234", root="1234")
+
+```
+
+## 提醒
+
+注意, 如果你需要**同步调用** NcatBot 的 API, 请使用 `xxx_xxx_sync` 系列函数. 没有 `_sync` 后缀的函数都是异步函数.
 
 ---
 title: 回调函数
@@ -1162,7 +1300,6 @@ def on_xxx_event(msg: BaseMessage): # 同步回调函数
 
 ::: code-tabs
 @tab python
-
 ```python
 @bot.private_event() # 为 bot 的私聊事件注册回调函数
 async def on_private_message(msg: PrivateMessage):
@@ -1170,12 +1307,22 @@ async def on_private_message(msg: PrivateMessage):
     if msg.raw_message == '测试':
         await bot.api.post_private_msg(msg.user_id, text="NcatBot 测试成功喵~")
 ```
-
 :::
 
-Ncatbot 对回调函数的名字没有要求, 但按照习惯一般命名为 `on_[事件类型]`.
+Ncatbot 对回调函数的名字没有要求, 但按照习惯一般命名为 `on_[事件类型]`。
 
-回调函数注册修饰器列表请查阅 [事件上报](./2.%20事件上报.md).
+回调函数注册修饰器一共有四个，分别是：
+
+- `BotClient.group_event()`
+- `BotClient.private_event()`
+- `BotClient.notice_event()`
+- `BotClient.request_event()`
+
+它们所管辖的事件参考[回调函数参数](#回调函数参数)。
+
+::: tip
+注意修饰器的写法，由于历史原因，应写作 `bot.group_event()` 而不是 `bot.group_event`。
+:::
 
 ::: details 对初学者的提醒
 装饰器是一种非常强大的功能, 它允许你在不修改原有函数代码的情况下, 动态地增加函数的功能. 装饰器本质上是==一个返回函数的函数==. 为了更好地理解装饰器的原理, 我们结合前面提到的示例来详细解释:
@@ -1285,23 +1432,17 @@ async def on_group_message(msg: GroupMessage):
 
 调用时的传参 `msg` 是一个 `BaseMessage` 的派生类, 其成员均符合 [OneBot11 标准](https://github.com/botuniverse/onebot-11).
 
-`msg` 的主要成员表如下, 有关成员含义的更详细的信息可以参考 [OneBot11 消息事件](https://github.com/botuniverse/onebot-11/blob/d4456ee706f9ada9c2dfde56a2bcfc69752600e4/event/message.md):
+`msg` 的主要成员表如下：
 
 - `msg.user_id: Union(str, int)`:  消息发送者 QQ 号.
 - `msg.group_id: Union(str, int)`:  消息来源群群号(如果是群聊消息).
 - `msg.message_id: Union(str, int)`:  消息 ID.
 - `msg.message_type: str`:  消息类型(`group`/`private`), 群聊或私聊
 - `msg.raw_message: str`: 符合 OneBot11 标准的==消息字符串==, 需手动解析, 不建议使用.
-- `msg.sender: Sender`:  消息发送者资料, 详细信息参考[解析消息](3.%20解析消息.md).
-- `msg.message: List[dict]`: 符合 OneBot11 标准的==数组格式消息==, 推荐使用它来进行逻辑判断. 详细信息参考[解析消息](3.%20解析消息.md).
+- `msg.sender: Sender`:  消息发送者实例。
+- `msg.message: List[dict]`: 符合 OneBot11 标准的==数组格式消息==, 推荐使用它来进行逻辑判断.
 - `msg.self_id: Union(str, int)`: 机器人 QQ 号.
 - `msg.time: int`: 事件发生时间戳.
-
-常用其它参考资料:
-
-- [OneBot11 消息段](https://github.com/botuniverse/onebot-11/blob/d4456ee706f9ada9c2dfde56a2bcfc69752600e4/message/segment.md)
-- [OneBot11 数组格式消息](https://github.com/botuniverse/onebot-11/blob/d4456ee706f9ada9c2dfde56a2bcfc69752600e4/message/array.md)
-- [NapCat 消息事件](https://napneko.github.io/develop/event#message-%E4%BA%8B%E4%BB%B6)
 
 ### Notice 类型回调函数参数
 
@@ -1446,7 +1587,7 @@ msg = {
 
 要获取上传的文件, 需要使用 `BotAPI.get_file()` 方法, 传入 `msg["file"]["id"]` 作为参数即可.
 
-[BotAPI.get_file()](../4.%20API%20参考/2.%20主要%20API%20及其使用.md#通过%20`file_id`%20获取文件下载链接).
+[BotAPI.get_file() 用法](../4.%20API%20参考/2.%20主要%20API%20及其使用.md#获取文件).
 
 #### 群消息撤回
 
@@ -1477,9 +1618,7 @@ def on_request(msg: Request):
     msg.reply_sync(False, "No") # 拒绝请求
 ```
 
-传入的 `msg` 是一个 `ncatbot.core.request.Request` 对象.
-
-其原型如下:
+传入的 `msg` 是一个 `ncatbot.core.request.Request` 对象，其原型如下：
 
 ```python
 class Request():
@@ -1510,6 +1649,8 @@ class Request():
 
 一般直接使用 `reply` 或者 `reply_sync` 方法处理即可.
 
+[处理好友和加群请求](../8.%20实际项目参考/教程项目/处理好友请求和加群请求.md)
+
 ---
 title: 事件上报
 createTime: 2025/02/07 11:24:25
@@ -1527,108 +1668,34 @@ NcatBot 的事件分两类, 一类是由 NapCat 上报的**官方事件**, 一�
 官方事件类型的字面量如下:
 
 ```python
-OFFICIAL_GROUP_MESSAGE_EVENT = "ncatbot.group_message_event"
-OFFICIAL_PRIVATE_MESSAGE_EVENT = "ncatbot.private_message_event"
-OFFICIAL_REQUEST_EVENT = "ncatbot.request_event"
-OFFICIAL_NOTICE_EVENT = "ncatbot.notice_event"
-OFFICIAL_STARUP_EVENT = "ncatbot.starup_event"
+OFFICIAL_GROUP_MESSAGE_EVENT = "ncatbot.group_message_event" # group_event
+OFFICIAL_PRIVATE_MESSAGE_EVENT = "ncatbot.private_message_event" # private_event
+OFFICIAL_REQUEST_EVENT = "ncatbot.request_event" # request_event
+OFFICIAL_NOTICE_EVENT = "ncatbot.notice_event" # notice_event
+OFFICIAL_STARUP_EVENT = "ncatbot.starup_event" # starup_event
 ```
+
+### 官方事件发生的条件
+
+- `group_event`: 收到**群聊消息时**发生, 效果是**触发所有绑定的回调函数**并**上报到事件总线**.
+  - 传入回调函数的参数是 `GroupMessage` 实例.
+  - 传入事件总线的参数是 `Event` 实例, 所带的数据(`Event.data`)为 `GroupMessage` 实例.
+- `private_event`: 收到**私聊消息**时发生, 其余同上, 区别是 `GroupMessage` 换为 `PrivateMessage`.
+- `notice_event`: 收到**通知信息**时发生, 效果是**触发所有绑定的回调函数**并**上报到事件总线**.
+  - 传入回调函数的参数是一个 `dict`.
+  - 传入事件总线的参数 `Event` 实例, 所带的数据(`Event.data`)为 `dict`.
+- `request_event`: 收到**请求信息**时发生.
+  - 传入回调函数的参数是 `Request` 实例。
+  - 传入事件总线的参数 `Event` 实例, 所带的数据(`Event.data`)为 `Request` 实例.
+- `starup_event`: API 可用时发生，无参数。
+
+具体参数格式查看[回调函数参数](./1.%20回调函数.md#回调函数参数)
 
 ### 自定义事件类型
 
 参阅[事件的发布和订阅](../6.%20开发%20NcatBot%20插件/3.%20插件的交互系统/3.1%20事件的发布和订阅.md).
 
 ## 官方事件上报
-
-### 为不同事件注册回调函数
-
-参考以下代码:
-
-::: code-tabs
-@tab python
-
-```python
-from ncatbot.core import BotClient
-from ncatbot.core import GroupMessage, PrivateMessage
-
-bot = BotClient()
-
-@bot.group_event()
-async def on_group_message(msg:GroupMessage): # 绑定群聊消息回调函数
-    _log.info(msg)
-
-@bot.private_event()
-async def on_private_message(msg:PrivateMessage): # 绑定私聊消息回调函数
-    _log.info(msg)
-
-@bot.notice_event() 
-async def on_notice_message(msg): # 绑定通知消息回调函数
-    _log.info(msg)
-
-@bot.request_event()
-async def on_request_message(msg): # 绑定请求消息回调函数
-    _log.info(msg)
-```
-
-:::
-
-`BotClient.group_event()`, `BotClient.private_event()`, `BotClient.notice_event()` 和 `BotClient.request_event()` 分别是四种消息类型的回调函数注册修饰器.
-
-### 回调函数注册修饰器参数(实验性功能)
-
-::: warning
-该功能处于实验阶段, 不建议无基础知识的开发者使用.
-:::
-
-==回调函数注册修饰器==接受一个 `types` 参数, 用于指定回调函数监听的细化事件类型.
-
-`types` 是一个列表, 其中每个元素都是一个字符串, 一个元素指代一种消息类型. 如果收到的消息包含 `types` 中的任意一个类型, 回调函数就会被调用.
-
-目前支持的类型有:
-
-| 消息格式           | 介绍         |
-| ------------------ | ------------ |
-| `text`             | 纯文本       |
-| `face`             | `qq` 表情    |
-| `image`            | 图片         |
-| `record`           | 语音         |
-| `video`            | 视频         |
-| `at`               | @某人        |
-| `rps`              | 猜拳魔法表情 |
-| `dice`             | 骰子         |
-| `shake`            | 私聊窗口抖动 |
-| `poke`             | 群聊戳一戳   |
-| `share`\<JSON>     | 链接分享     |
-| `contact`\<JSON>   | 推荐好友/群  |
-| `location`\<JSON>  | 位置         |
-| `music`\<JSON>     | 音乐分享     |
-| `reply`            | 回复消息     |
-| `forward`          | 转发消息     |
-| `node`             | 转发消息节点 |
-| `json`             | `json` 信息  |
-| `mface`            | `qq` 表情包  |
-| `file`             | 文件         |
-| `markdown`         | `markdown`   |
-| `lightapp`\<JSON>  | `小程序卡片` |
-
-举个例子, 如果你想要监听群聊的文本消息, 你可以这样注册:
-
-::: code-tabs
-@tab python
-
-```python
-from ncatbot.core import BotClient
-from ncatbot.core import GroupMessage
-
-bot = BotClient()
-
-@bot.group_event(["text"])
-async def on_group_message(msg:GroupMessage):
-```
-:::
-
-需要注意的是: <mark>只要消息内存在文本, 这个消息就会被监听, 而不是纯文本才会被监听.</mark>
-
 
 ### 事件上报代码
 
@@ -1653,25 +1720,12 @@ async def handle_notice_event(self, msg: dict):
 ```
 :::
 
-### 官方事件发生的条件
-
-- `group_event`: 收到**群聊消息时**发生, 效果是**触发所有绑定的回调函数**并**上报到事件总线**.
-  - 传入回调函数的参数是 `GroupMessage` 实例.
-  - 传入事件总线的参数是 `Event` 实例, 所带的数据(`Event.data`)为 `GroupMessage` 实例.
-- `private_event`: 收到**私聊消息**时发生, 其余同上, 区别是 `GroupMessage` 换为 `PrivateMessage`.
-- `notice_event`: 收到**通知信息**时发生, 效果是**触发所有绑定的回调函数**并**上报到事件总线**.
-  - 传入回调函数的参数是一个 `dict`.
-  - 传入事件总线的参数 `Event` 实例, 所带的数据(`Event.data`)为 `dict`.
-- `request_event`: 收到**请求信息**时发生, 其余同上.
-
-具体参数参阅[回调函数](1.%20回调函数.md)
-
 ### 四种消息的定义
 
 - 群聊消息: 略
 - 私聊消息: 略
-- 通知消息: 咕咕咕
-- 请求消息: 咕咕咕
+- 通知消息: 消息撤回，头像双击动作，私聊输入状态更新，群成员变化，群成员减少，禁言相关。
+- 请求消息: 加好友请求和加群请求。
 
 
 ## 自定义事件上报
@@ -1696,35 +1750,172 @@ permalink: /guide/parsemsg/
 
 [查看简介](1.%20回调函数.md#Message%20类型回调函数参数).
 
+### 主要成员
+
+- `msg.user_id: Union(str, int)`:  消息发送者 QQ 号.
+- `msg.group_id: Union(str, int)`:  消息来源群群号(如果是群聊消息).
+- `msg.message_id: Union(str, int)`:  消息 ID.
+- `msg.message_type: str`:  消息类型(`group`/`private`), 群聊或私聊.
+- `msg.raw_message: str`: 符合 OneBot11 标准的==消息字符串==, 需手动解析, 不建议使用.
+- `msg.sender: Sender`:  消息发送者实例，详细信息将在下面给出。
+- `msg.message: List[dict]`: 符合 OneBot11 标准的==数组格式消息==, 推荐使用它来进行逻辑判断, 详细解析方式将在下面给出。
+- `msg.self_id: Union(str, int)`: 机器人 QQ 号.
+- `msg.time: int`: 事件发生时间戳.
+
+### 其它成员
+
+- `msg.sub_type: str`:  消息子类型(`friend`, `group`, `other`).
+- `msg.sub_type: str`:  消息子类型(`friend`, `group`, `other`).
+- `msg.message_format: str`:  消息格式(`string`/`json`/`markdown`), 作用不明
+- `msg.raw_message: str`: 符合 OneBot11 标准的==消息字符串==, 需手动解析, 不建议使用.
+
+
 ## 内置方法
 
-咕咕咕, 未来将提供支持...
+### `BaseMessage.reply`
+
+用于[快捷调用 API](../4.%20API%20参考/2.%20主要%20API%20及其使用.md#发送消息) 回复消息。
+
+该接口有同步版本，`reply_sync`。
+
 
 ## sender 成员
 
 `BaseMessage` 类的 `sender` 成员为 `Sender` 类, `Sender` 类包含以下成员:
 
 ```python
-sender.user_id = "123456" # 消息发送者 QQ 号.
-sender.nickname = "昵称" # 消息发送者 QQ 昵称.
-sender.card = "群昵称" # 消息发送者群卡片昵称(如果是群聊消息).
+msg.sender.user_id = "123456" # 消息发送者 QQ 号.
+msg.sender.nickname = "昵称" # 消息发送者 QQ 昵称.
+msg.sender.card = "群昵称" # 消息发送者群卡片昵称(如果是群聊消息).
 ```    
 
 ## message 成员
 
-`BaseMessage.message` 是一个字典的列表(`list[dict]`), 它是符合 OneBot11 标准的==[数组格式消息](https://github.com/botuniverse/onebot-11/blob/d4456ee706f9ada9c2dfde56a2bcfc69752600e4/message/array.md)==.
+::: warning
+接下来的叙述中包含多重定语和嵌套递归定义, 容易引起混淆. 请注意区分**消息段**、**消息**、**消息段列表**、**消息列表**的定义。区分**格式**和**类型**的区别。
+:::
 
-我们称 `list[dict]` 为**消息段列表**, 称 `dict` 为**消息段**.
+`BaseMessage.message` 是一个字典的列表(`list[dict]`), 我们称它为**消息段列表**, 称 `dict` 为**消息段**.
 
-消息段有不同种类, 具体如下:
+**消息段列表**有不同种类, 具体如下:
 
-### forward 类型消息
+### 组合类型消息段列表
 
-`forward` 类型的消息段表示一个转发消息.
+**组合类型消息段列表**可以包含除了 `forward` 类型**消息段**之外的其它**任意多个任意消息段的有序组合**。
 
-`forward` 类型消息如果作为**消息段**出现, 那么该消息段所在**消息段列表**一定只有一个成员.
+组合类型消息段列表包含以下几种类型消息段的组合.
 
-一般有两种格式.
+#### text 类型消息段
+
+```python
+msg.message = [
+    {
+        'type': 'text', 
+        'data': {
+            'text': '123456'
+        }
+    }
+]
+```
+
+#### at 类型消息段
+
+```python
+msg.message = [
+    {
+        'type': 'at', 
+        'data': {
+            'qq': 12345678
+        }
+    }
+]
+```
+
+当 `qq` 字段为 `all` 时, 表示@全体成员.
+
+#### reply 类型消息段
+
+```python
+msg.message = [
+    {
+        'type': 'reply', 
+        'data': {
+            'id': '671936880', # 表示所回复的消息的 id
+        }
+    }
+]
+```
+
+当包含 `reply` 类型消息段时, `reply` 消息段一定位于消息段列表的第一个位置.
+
+#### face 类型消息段
+
+```python
+msg.message = [
+    {
+        'type': 'face', 
+        'data': {
+            'id': 277 # 表示表情的 id
+            'raw': {
+                'faceIndex': 277, # 表情 id
+                'faceText': '[汪汪]',  # 表情描述文本
+                'faceType': 2 # 表情类型, 其实我也不知道什么意思
+            }
+        }
+    }
+]
+```
+
+#### image 类型消息段
+
+```python
+msg.message = [{
+    'type': 'image', 
+    'data': {
+        'file': '17F7844DD051F03B0CF2198CAAD887A0.jpg' # 文件名, 几乎没用
+        'url': 'http://example.com/fndsnajfasndkgjnasjk.jpg' # 图片下载链接, 很重要
+        'summary': '[图片]'
+    }
+}]
+```
+
+#### video 类型消息段
+
+```python
+msg.message = [{
+    'type': 'video', 
+    'data': {
+        'file': '17F7844DD051F03B0CF2198CAAD887A0.mp4' # 文件名, 几乎没用
+        'url': 'http://example.com/fndsnajfasndkgjnasjk' # 视频间接下载链接, 无法直接下载, 也无法直接使用
+        'summary': '[视频]'
+    }
+}]
+```
+        
+视频目前只能通过 `url` 下载源文件后**手动修改后缀名为 `.mp4`**后查看, 未来将实现自动修改和识别.
+
+#### file 类型消息段
+
+```python
+msg.message = [
+    {
+        'type': 'file', 
+        'data': {
+            'file': '0d7520ca-4b60-4fcd-a87b-581f69da3540.mp4', # 文件名, 几乎没用
+            'file_id': '9423e3b5f95b09df4de35ea1c783c368_feec4190-1243-11f0-bf38-8307ae91f46d', # 文件 id, 很有用
+            'file_size': '1177324' # 文件大小, 几乎没用
+        }
+    }
+]
+```
+
+通过 `file_id` 可以获取更加细节的文件信息, 接口为 [get_file](../4.%20API%20参考/2.%20主要%20API%20及其使用.md#获取文件)。
+
+### 合并转发消息段列表
+
+**合并转发消息段列表**表表示一个**合并转发消息**，或者说是**消息卡片**。
+
+**合并转发消息段列表**一定只包含**一个消息段**，这个消息段称为 **forward 类型消息段**，具有两种**格式**。
 
 #### 消息 ID 格式
 
@@ -1732,8 +1923,7 @@ sender.card = "群昵称" # 消息发送者群卡片昵称(如果是群聊消息
 msg.message = [{'type': 'forward', 'data': {'id': '7489856252632721587'}}]
 ```
 
-这个很长的 `id` 字段没有用, 如果要获取转发消息的内容, 必须使用 message 成员的 `message_id` 字段和 [get_msg 方法]() 可以获取到消息的详细信息, 获取的数据如下, 提取 `result["message"]` 得到的结果定义为 **content** 格式的.
- **forward** 类型消息.
+这个很长的 `id` 字段**没用**, 如果要获取转发消息的内容, 必须使用 message 成员的 `message_id` 字段和 [get_msg 方法]() 可以获取到消息的详细信息, 获取的数据如下：
 
 ```python
 result = {
@@ -1752,12 +1942,10 @@ result = {
 }
 ```
 
+提取 `result["message"]` 得到的结果被定义为 **content 格式的 forward 类型消息段**.
+
 
 #### content 格式
-
-::: warning
-请保证自己语文及格再阅读以下说明, 包含多重定语和多重定义, 容易引起混淆.
-:::
 
 格式如下:
 
@@ -1794,142 +1982,23 @@ msg.message = [
 ]
 ```
 
-一段 content 格式消息是一个 `list[dict]`, `dict` 表示一个**消息**(不是**消息段**), 这个 `dict` 的结构和 `BaseMessage.__dict__` 基本一致, content 格式消息的本质是**消息列表**.
+一个 **content 格式 forward 类型消息段** 主要包含一份 `data['content']`（`msg.message[0]['data']['content']`），它是一个 `list[dict]`, `dict` 表示一个**消息**(不是**消息段**), 这个 `dict` 的结构和 `BaseMessage.__dict__` 基本一致, `data['content']` 被称为**消息列表**.
 
 **消息列表**->**消息**->**消息段列表**->**消息段**
 
-而消息段又可以是 content 格式的 forward 类型的消息段, 这种**消息段**本质是**消息列表**, 所以说, 这里的定义是**递归的**.
+而 `data['content']` 里包含的第四级**消息段**又可以是 **content 格式的 forward 类型的消息段**, 所以说, 这里的定义是**递归的**.
 
 上面的示例省略了消息列表中后两条消息的其它数据, 只保留了 `message` 字段. 可以对比一下一条消息的 key 以及 `BaseMessage` 的 成员列表.
 
-注意, 这里的消息段所带的 `data.content` 里面也可以包含带有 forward 类型的消息段的消息, 这和 forward 作为消息段列表中的唯一元素不矛盾, 因为 `data.content` 本质是**消息列表**, 而不是**消息段列表**. 但是一条**消息**所带的**消息段列表**中, 如果出现了 `forward` 类型的消息段, 那么该消息段就是唯一的消息段.
+注意, 这里的**消息段**所带的 `data['content']` 里面也可以包含带有 forward 类型的消息段的消息, 这和 forward 作为**消息段列表**中的唯一元素不矛盾, 因为 `data['content']` 本质是**消息列表**, 而不是**消息段列表**. 但是一条**消息**所带的**消息段列表**中, 如果出现了 `forward` 类型的消息段, 那么该消息段就是唯一的消息段.
 
-### 组合类型消息
-
-不包含 `forward` 类型**消息段**时, 统称组合类型消息.
-
-组合类型消息是一个**消息段列表**, 列表中的每个消息**有序**.
-
-组合类型消息包含以下几种类型的组合.
-
-#### text 类型消息
-
-```python
-msg.message = [
-    {
-        'type': 'text', 
-        'data': {
-            'text': '123456'
-        }
-    }
-]
-```
-
-#### at 类型消息
-
-```python
-msg.message = [
-    {
-        'type': 'at', 
-        'data': {
-            'qq': 12345678
-        }
-    }
-]
-```
-
-当 `qq` 字段为 `all` 时, 表示@全体成员.
-
-#### reply 类型消息
-
-```python
-msg.message = [
-    {
-        'type': 'reply', 
-        'data': {
-            'id': '671936880', # 表示所回复的消息的 id
-        }
-    }
-]
-```
-
-当包含 `reply` 类型消息段时, `reply` 消息段一定位于消息段列表的第一个位置.
-
-#### face 类型消息
-
-```python
-msg.message = [
-    {
-        'type': 'face', 
-        'data': {
-            'id': 277 # 表示表情的 id
-            'raw': {
-                'faceIndex': 277, # 表情 id
-                'faceText': '[汪汪]',  # 表情描述文本
-                'faceType': 2 # 表情类型, 其实我也不知道什么意思
-            }
-        }
-    }
-]
-```
-
-#### image 类型消息
-
-```python
-msg.message = [{
-    'type': 'image', 
-    'data': {
-        'file': '17F7844DD051F03B0CF2198CAAD887A0.jpg' # 文件名, 几乎没用
-        'url': 'http://example.com/fndsnajfasndkgjnasjk.jpg' # 图片下载链接, 很重要
-        'summary': '[图片]'
-    }
-}]
-```
-
-#### video 类型消息
-
-```python
-msg.message = [{
-    'type': 'video', 
-    'data': {
-        'file': '17F7844DD051F03B0CF2198CAAD887A0.mp4' # 文件名, 几乎没用
-        'url': 'http://example.com/fndsnajfasndkgjnasjk' # 视频间接下载链接, 无法直接下载, 也无法直接使用
-        'summary': '[视频]'
-    }
-}]
-```
-        
-视频目前只能通过 `url` 下载源文件后**手动修改后缀名为 `.mp4`**后查看, 未来将实现自动修改和识别.
-
-#### file 类型消息
-
-```python
-msg.message = [
-    {
-        'type': 'file', 
-        'data': {
-            'file': '0d7520ca-4b60-4fcd-a87b-581f69da3540.mp4', # 文件名, 几乎没用
-            'file_id': '9423e3b5f95b09df4de35ea1c783c368_feec4190-1243-11f0-bf38-8307ae91f46d', # 文件 id, 很有用
-            'file_size': '1177324' # 文件大小, 几乎没用
-        }
-    }
-]
-```
-
-通过 `file_id` 可以获取更加细节的文件信息, 接口为 [get_file]().
-
-
-## 其它成员
-
-- `msg.sub_type: str`:  消息子类型(`friend`, `group`, `other`).
-- `msg.sub_type: str`:  消息子类型(`friend`, `group`, `other`).
-- `msg.message_format: str`:  消息格式(`string`/`json`/`markdown`), 作用不明
-- `msg.raw_message: str`: 符合 OneBot11 标准的==消息字符串==, 需手动解析, 不建议使用.
 
 ## 参考资料
 
+- [OneBot11 消息事件](https://github.com/botuniverse/onebot-11/blob/d4456ee706f9ada9c2dfde56a2bcfc69752600e4/event/message.md)
 - [OneBot11 消息段](https://github.com/botuniverse/onebot-11/blob/d4456ee706f9ada9c2dfde56a2bcfc69752600e4/message/segment.md)
 - [OneBot11 数组格式消息](https://github.com/botuniverse/onebot-11/blob/d4456ee706f9ada9c2dfde56a2bcfc69752600e4/message/array.md)
+- [NapCat 消息事件](https://napneko.github.io/develop/event#message-%E4%BA%8B%E4%BB%B6)
 
 ---
 title: API 调用
@@ -2033,9 +2102,9 @@ permalink: /guide/f34xj8pk/
 - `GroupMessage.reply()`
 - `PrivateMessage.reply()`
 
-它们都支持"MessageChain"和"命名参数"两种格式的消息.
+其中，`xxx.reply()` 是 `BotAPI.post_xxx_msg()` 的语法糖, 所支持的参数和 `BotAPI.post_xxx_msg()` 基本一致. 大部分时候使用 `xxx.reply()` 会更方便。
 
-`xxx.reply()` 是 `BotAPI.post_group_msg()` 的语法糖, 所支持的参数和 `BotAPI.post_group_msg()` 基本一致. 大部分时候使用 `xxx.reply()` 会更方便.
+它们都支持 "MessageChain" 和 "命名参数" 两种格式的消息.
 
 *下文中, 发送私聊消息和发送群聊消息的唯一区别是 `group_id` 变为 `user_id`, 故不重复举例.*
 
@@ -2117,7 +2186,6 @@ permalink: /guide/f34xj8pk/
 ```
 :::
 
-
 ### 使用 MessageChain 构造并发送消息(推荐)
 
 MessageChain 这个词是不是很熟悉呢?
@@ -2175,11 +2243,13 @@ async def on_group_message(msg: GroupMessage):
 
 这里展示了 `MessageChain` 大部分常见的用法, 具体的:
 
-- 列表化构造, 构造时传入一个列表, 列表中的元素是列表或者 Element 类. ==列表至多嵌套一层==.
+- 列表化构造, 构造时传入一个列表, 列表中的元素是列表或者 Element 类。
 
-- 通过 `+` 运算符连接, `MessageChain` 对==可发送对象==均可右加.
+- 通过 `+` 运算符连接, `MessageChain` 对==可发送对象==均可**右加**.
 
 - 单纯文本可以不使用 `Element` 类, 直接传入字符串即可.
+
+- 如果想用 CQ 码，直接当文本发即可，所有文本会做 CQ 码解析，且支持混合使用。
 
 *可发送对象: `MessageChain`, `Element`, `str`.*
 
@@ -2255,7 +2325,6 @@ await bot.api.post_group_msg(group_id=123456, text="喵喵喵~", reply=13579)
 await msg.reply(face=123, at=1234567)
 ```
 :::
-
 
 ### 一般建议
 
@@ -2356,13 +2425,11 @@ async def upload_group_file(
 
 ## 获取文件
 
-文件消息中一般不提供文件的下载链接, 需要通过 `get_file` 方法传入 `file_id` 来请求下载链接, 也就是说, 获取文件的前提获取 `file_id`. 
+文件消息中一般不提供文件的下载链接, 需要通过 `get_file` 方法传入 `file_id` 来请求下载链接, 也就是说, 获取文件的前提是获取 `file_id`。 
 
 ### 通过 `file_id` 获取文件下载链接
 
-使用 `get_file` 方法传入 `file_id` 即可获取消息的详细信息.
-
-[函数原型](2.%20主要%20API%20及其使用.md#消息接口)参考.
+使用 `BotAPI.get_file` 方法传入 `file_id` 即可获取消息的详细信息, 用法可以参考[示例](#示例)
 
 返回值是一个 `dict` 类型, 示例如下:
 
@@ -2381,7 +2448,7 @@ result = {
 
 ### 文件直接被发送
 
-参考[解析消息](../3.%20事件处理/3.%20解析消息.md#file%20类型消息)来获取一条消息中的 `file_id`.
+参考[解析消息](../3.%20事件处理/3.%20解析消息.md#file-类型消息段)来获取一条消息中的 `file_id`.
 
 ### 已知文件位于某个群的群文件
 
@@ -2502,6 +2569,35 @@ createTime: 2025/02/07 11:25:41
 permalink: /guide/2dsviohi/
 ---
 
+## 功能速查
+
+- 获取群昵称: `get_group_card`
+- 资料卡点赞: `send_like`
+- 上传文件、下载文件、管理群文件: [参考一](2.%20主要%20API%20及其使用.md#上传文件), [参考二](../8.%20实际项目参考/教程项目/上传和获取文件.md)
+- 发送消息: [完整参考](2.%20主要%20API%20及其使用.md#发送消息)
+- 戳一戳: `send_poke`
+- 转发消息: [多选转发](#发送合并转发消息), 单个转发使用 `forward_friend_single_msg` 或者 `forward_group_single_msg`。
+- 踢人: `set_group_kick`
+- 禁言: `set_group_ban`，`set_group_whole_ban`。
+- 设管理: `set_group_admin`
+- 操作精华消息: `set_group_essence`，`delete_essence_msg`。
+- 改群名: `set_group_card`
+- Bot 退群: `set_group_leave`
+- 设置群头衔，群称号: `set_group_special_title`
+- 好友请求，加群请求: [参考](../8.%20实际项目参考/教程项目/处理好友请求和加群请求.md)
+- 群文件相关: 
+  - `create_group_file_folder`
+  - `delete_group_file`
+  - `delete_group_folder`
+  - `get_group_root_files`
+  - `get_group_files_by_folder`
+  - `get_group_file_url`（如果群文件已经下载过了，可能会返回路径）
+- 群签到、群打卡: `set_group_sign`
+- AI 语音
+  - `get_ai_characters`
+  - `send_group_ai_record`
+  - `get_ai_record`
+
 ## 部分 API 简介 1
 
 ::: warning
@@ -2510,9 +2606,9 @@ permalink: /guide/2dsviohi/
 
 ### 处理好友请求和加群请求
 
-[参考](../3.%20事件处理/1.%20回调函数.md#Request%20类型回调函数参数)
+[参考](../8.%20实际项目参考/教程项目/处理好友请求和加群请求.md)
 
-### 发送私聊/群聊合并转发消息
+### 发送合并转发消息
 
 ```python
     async def send_private_forward_msg(
@@ -3511,13 +3607,9 @@ createTime: 2025/02/09 16:45:00
 permalink: /guide/inxart0k/
 ---
 
-::: warning
-请至少**运行并测试成功一次**后, 再尝试使用远端 NapCat 接口.
-:::
-
 如果在 NcatBot 之前没有接触过其它涉及网络的编程或者配置, 那么**不应该**使用远端 NapCat 接口. ==选择使用远端 NapCat 接口表明你愿意为此付出时间学习或者已经具备相当的基本知识.==
 
-[了解 NapCat 和 NcatBot 的关系](./1.%20认识%20NcatBot.md).
+[了解 NapCat 和 NcatBot 的关系](./1.%20认识%20NcatBot.md#NcatBot-和-NapCat-的关系).
 
 由于 QQ 风控, 不建议频繁开关 NapCat. 因此有时候需要将 **NapCat** 部署在云服务器上. 一般来说建议一并将 **NcatBot** 也部署在同一台服务器上, 但有时候确实需要分开部署, 此时可以使用远端 NapCat 接口.
 
@@ -3536,23 +3628,38 @@ permalink: /guide/inxart0k/
 2. 开放**系统防火墙**的 3000, 3001, 6099 端口.
 3. 开放**服务商防火墙**的 3000, 3001, 6099 端口.
 
-请参考 [Linux 安装](../1.%20快速开始/1.1%20Linux%20安装.md) 完成 2, 3 步, 服务器公网 IP 请向服务商获取.
+请参考 [Linux 安装](../1.%20快速开始/1.1%20Linux%20安装.md#检查网络环境) 完成 2, 3 步, 服务器公网 IP 请向服务商获取.
 
 ## 自动配置远端 NapCat 服务器(推荐)
 
-在远端正常运行 NcatBot 的示例程序, 下面将其称为**远端引导程序**, 运行远端引导程序时, 除了改动 `bot_uin` 和 `root` 外, 还需将 ==`ws_uri` 填写为 `ws://<服务器公网 IP>:3001`.== 例如服务器公网 IP 为 `123.123.123.123`, 则 `ws_uri` 应填写为 `ws://123.123.123:3001`.
+在远端正常运行 NcatBot 的示例程序, 下面将其称为**远端引导程序**。
+
+运行远端引导程序时, 除了改动 `bt_uin` 和 `root` 外, 还需将 ==`ws_uri` 填写为 `ws://<服务器公网 IP>:<端口号>`。
+
+```python
+from ncatbot.core import BotClient
+bot = BotClient()
+# 假设服务器公网 IP 为 123.123.123.123, 你希望在 3001 端口上开启 NapCat 服务。
+bot.run_blocking(bt_uin="123456", root="root", ws_uri="ws://123.123.123.123:3001", ws_token="your_token")
+```
 
 Ncatbot 会进行自动登录的引导, 远端引导程序成功启动并进行测试后, 可以关闭 NcatBot 但**不要关闭 NapCat**.
 
-接着在本地运行 Ncatbot, 称为**本地启动程序**. 本地启动程序 `ws_uri` 填写方式和远端引导程序一致, 均为 `ws://<服务器公网 IP>:3001`. 
+接着在本地使用同样的参数运行 Ncatbot 即可。
 
-本地启动程序的 `token` 可以和远端引导程序一样默认留空, 也可以自行填写, 但是必须和远端引导程序进行引导时的 `token` 填写保持一致. **建议将本地启动程序和远端引导程序的 `token` 设置为随机字符串以保证安全.**
+建议使用 `token` 参数确保 NcatBot 和 NapCat 的连接安全。
 
 ## 手动配置远端 NapCat 服务器
 
-根据 [NapCat 文档](https://napneko.github.io/), 在远端正确配置 NapCat 及其 WebSocket 服务器.
+根据 [NapCat 文档](https://napneko.github.io/), 在远端正确配置 NapCat 及其 WebSocket 服务器。
+
+尤其注意需要 "启用" WebSocket 服务器。
 
 本地运行 NcatBot, `ws_uri` 填写为 `ws://服务器公网 IP:{你配置时填写的端口}`. `token` 填写为 WebSocket 的 token(注意不是 webui 的 token, WebSocket token 默认为空字符串).
+
+## 提醒
+
+- 获取文件时，如果 NapCat 服务器在远端，那么会返回远端服务器的路径。你需要自行对位于远端的文件进行管理。
 
 
 ---
@@ -3586,6 +3693,16 @@ NcatBot 提供日志功能以便检查程序运行情况. 日志**按天分割**
 导入 `ncatbot.utils.logger` 中的 `get_log` 函数, 调用 `get_log` 函数即可获取一个日志对象 `_log`.
 
 `_log` 是一个标准的 `logging.Logger` 对象, 支持 `debug, info, warning, error` 等方法.
+
+## 日志路径
+
+设置环境变量：
+
+`LOG_LEVEL`：终端日志等级，默认 INFO。
+`FILE_LOG_LEVEL`：文件日志等级，默认 DEBUG。
+`LOG_FILE_PATH`：日志保存目录。
+`LOG_FILE_NAME`：日志文件名，默认 `bot_%Y_%m_%d.log`。
+
 
 
 ---
@@ -3695,6 +3812,8 @@ permalink: /guide/usenccli/
 
 更新 NcatBot. 会使用 pip 从阿里源(`https://mirrors.aliyun.com/pypi/simple/`)安装最新版本的 NcatBot, 安装之后会关闭 CLI.
 
+同时也会询问是否更新 NapCat
+
 ---
 title:  术语表
 createTime: 2025/03/27 10:55:11
@@ -3725,126 +3844,41 @@ if __name__ == "__main__":
 
 
 ---
-title: 嵌入开发
-createTime: 2025/04/06 20:00:05
-permalink: /guide/embeddev/
+title: AI+NcatBot
+createTime: 2025/03/25 23:21:39
+permalink: /guide/useaidv/
 ---
 
-从 3.7.0 版本后, NcatBot 对嵌入开发的支持更加完善.
+AI 时代已至, 只需要很低的学习成本, 就能够使用 AI 和 NcatBot 开发自己的 QQ 机器人.
 
-使用 BotClient 类可以方便的将 Ncatbot 作为模块嵌入到你的 Python 项目中.
+## NcatBot 是一个 AI 友好的项目
 
-## 适用场景
+### AI 专用文档
 
-### 对 NcatBot 插件功能依赖一般
+[AI 专用文档](https://raw.githubusercontent.com/Isaaczhr/NcatBotDocs/refs/heads/master/all-guides.md)，[AI 专用文档(国内)](https://ghfast.top/https://raw.githubusercontent.com/Isaaczhr/NcatBotDocs/refs/heads/master/all-guides.md)
 
-目前的插件生态情况, 基本都可以用这个办法.
+将该文档发送给 [kimi](https://kimi.ai)，[deepseek](https://chat.deepseek.com)，描述你的需求，AI 会阅读文档并实现。
 
-推荐以[阻塞启动模式](#阻塞启动模式)启动.
+chatgpt 和 grok 也有很好的效果，但不推荐使用国内的其它大语言模型。
 
-非阻塞模式下, NcatBot 需要手动调用退出函数来退出 NcatBot 以保证可持久化数据的完整性.
-
-### 对 NcatBot 插件功能依赖非常强
-
-如果你的项目高度依赖 NcatBot 插件的完善功能, 推荐以[引导模式](#引导模式)启动, 让 NcatBot 引导程序来管理插件, 你的项目作为守护进程运行.
-
-你需要注意, Ncatbot 在接受 `Ctrl+C` 信号时, 进入退出流程, 你可能需要捕获这些信号以便你的项目也能正常退出.
-
-## 阻塞启动模式
-
-`BotClient` 对象提供 `run_blocking` 方法以阻塞模式启动 NcatBot. NcatBot 启动完成后, 会返回一个 `BotAPI` 对象, 该对象提供 NcatBot 的所有接口.
-
-同时提供 `exit` 方法以正常退出 NcatBot, `exit` 方法不会退出进程, 你可以继续做你的事情.
-
-```python
-from ncatbot.core import BotClient
-
-bot = BotClient()
-api = bot.run_blocking(bt_uin="123456", root="1234567") # 启动 NcatBot, NcatBot 接口可用时返回 API 实例
-api.post_private_msg_sync(12345678, "你好") # 此时 NcatBot 已经启动完成, 可以正常使用接口
-bot.exit()
-print("退出")
-```
-
-## 非阻塞启动模式
-
-`BotClient` 对象提供 `run_none_blocking` 方法以非阻塞模式启动 NcatBot.
-
-非阻塞启动的 NcatBot 没有完全准备好, 需要通过以下方式确保其正常运行.
-
-### 提前引导 + sleep
-
-启动 NcatBot 需要一定时间. 
-
-推荐先用引导程序完成一次启动引导, 不要关闭启动的 NapCat 服务. 接着再以非阻塞模式. 此时 NcatBot 将启动快速引导模式, 大约 sleep 10 秒后, NcatBot 就会进入正常运行模式.
-
-此时所有接口均可用.
-
-```python
-import time
-
-from ncatbot.core import BotClient
-
-bot = BotClient()
-bot.run_none_blocking(bt_uin="123456", root="123456") # 在这里指定 QQ 运行参数, 可以替代全局变量 config
-time.sleep(10) # 等待 NcatBot 启动完成
-
-api.post_private_msg_sync(123456, "你好") # 此时 NcatBot 已经启动完成, 可以正常使用接口
-
-```
-
-### STARTUP_EVENT 回调函数 + 锁
-
-`BotClient` 对象提供针对 `startup_event` 事件的回调函数, 以在 NcatBot 接口可用发.
-
-可以通过全局加锁的方式来精确地在 NcatBot 接口可用时执行你的代码.
-
-```python
-from ncatbot.core import BotClient
-from threading import Lock
+### 使用示例
 
 
-lock = Lock()
-lock.acquire() # 全局加锁
 
-bot = BotClient()
-bot.add_startup_handler(lambda: lock.release()) # 在 NcatBot 接口可用时, 释放全局锁
-api = bot.run_none_blocking(bt_uin="123456", root="123456")
-# 这里可以做点别的事情
-lock.acquire() # 等待 NcatBot 启动完成
-api.post_private_msg_sync(123456, "你好") # 此时 NcatBot 已经启动完成, 可以正常使用接口
-```
+## 配置 VSCode 的 Python 开发环境
 
-## 引导模式
+### 安装 VSCode
 
-使用正常的 NcatBot 引导程序, 添加一个 startup 回调函数来引导你的项目启动.
+### 安装 VSCode 插件
 
-你的项目必须以守护进程的形式在**另一个线程**运行.
+### 创建工作区
 
-```python
-from ncatbot.core import BotClient, BotAPI
-from threading import Thread
+### 使用 VSCode 运行示例机器人
 
-def start_my_app(api:BotAPI):
-    print("start my app")
-    api.post_private_msg_sync("1234", "你好呀嵌入程序")
+## 使用 AI 开发
 
-def start_my_app_warp():
-    th = Thread(
-        target=lambda api=bot.api:start_my_app(api),
-        daemon=True,
-    ) # 守护模式在另一个线程运行
-    th.start()
 
-bot = BotClient()
-bot.add_startup_handler(start_my_app_warp)
-bot.run(bt_uin="1234", root="1234")
 
-```
-
-## 提醒
-
-注意, 如果你需要**同步调用** NcatBot 的 API, 请使用 `xxx_xxx_sync` 系列函数. 没有 `_sync` 后缀的函数都是异步函数.
 
 ---
 title: 了解 NcatBot 插件
@@ -4190,16 +4224,13 @@ permalink: /guide/pasevent/
 
 ## 订阅事件
 
-### 使用兼容回调函数注册器
-
-参考[了解 NcatBot 插件](1.%20了解%20NcatBot%20插件.md).
+可以**使用兼容回调函数注册器**来订阅事件，具体参考[了解 NcatBot 插件](1.%20了解%20NcatBot%20插件.md).
 
 兼容回调函数注册器的本质仍然是订阅事件. 使用兼容注册器注册后, 会在**插件加载时**为注册的函数**订阅对应的事件**.
 
+下面介绍通过事件名订阅的方法。
 
-### 根据事件名称订阅事件
-
-可以使用精确匹配或者正则匹配==按照事件类型==订阅事件, 如下例.
+### 示例代码
 
 ```python
 class MyPlugin(BasePlugin):
@@ -4215,11 +4246,20 @@ class MyPlugin(BasePlugin):
         print(f"精确匹配处理器: {event.data}")
 ```
 
+- `BasePlugin` 提供了 `register_handler` 方法用于订阅事件, 该方法接受两个参数:
+  - `type: str` 事件类型, 支持全名称和正则表达式，请参考上方的示例。
+  - `func: Callable[[Event], Any]` 事件回调函数, 事件回调函数接受一个 `Event` 类型的参数，且一般是插件类的成员函数。
+- 理论上讲在任何时间都可以订阅事件，但一般在 `on_load` 函数中订阅。
+
 ### 事件回调函数
 
-订阅事件时需要指定一个回调函数, 回调函数需要接受一个 `Event` 类型的参数.
+订阅事件时需要指定一个回调函数, 回调函数需要接受一个 `Event` 类型的参数。
 
-在事件回调函数中可以对事件进行处理, 也可以调用 `Event` 的方法停止事件传播或者添加事件处理结果.
+在事件回调函数中可以对事件进行处理，一般有下面的一些操作：
+
+- 调用 `self.api` 发送一些什么东西。（插件实例会有一个 `BotAPI` 成员，用于调用 API）
+- 调用 `event.stop_propagation()` 停止事件传播。
+- 调用 `event.add_result(result)` 添加事件处理结果。
 
 #### Event 原型
 
@@ -4579,19 +4619,13 @@ permalink: /guide/timertask/
 
 ## 注册定时任务
 
-```
-解析时间参数为调度配置字典，支持格式:
-- 一次性任务: 'YYYY-MM-DD HH:MM:SS' 或 GitHub Action格式 'YYYY:MM:DD-HH:MM:SS'
-- 每日任务: 'HH:MM'
-- 间隔任务: 
-    * 基础单位: '120s', '2h30m', '0.5d'
-    * 冒号分隔: '00:15:30' (时:分:秒)
-    * 自然语言: '2天3小时5秒'
-```
-
 一般在 `BasePlugin.on_load()` 方法中时注册定时任务.
 
-### 函数原型参考
+[实际案例](../../8.%20实际项目参考/教程项目/定时任务插件.md)
+
+## 函数原型和使用方法
+
+通过 `BasePlugin.add_scheduled_task` 来注册定时任务，函数原型如下：
 
 ```python
 class BasePlugin:
@@ -4630,53 +4664,8 @@ class BasePlugin:
         """
 ```
 
-### 实际案例
 
-又见[早八提醒插件](../../8.%20实际项目参考/3.%20早八提醒插件.md).
-
-```python
-class ZaoBa(BasePlugin):
-    name = "ZaoBa" # 插件名称
-    version = "0.0.1" # 插件版本
-
-    async def on_load(self):
-        # 插件加载时执行的操作, 可缺省
-        self.add_scheduled_task(
-            job_func=self.zaoba, 
-            name="早八问候", 
-            interval="08:00",
-            max_runs=10, 
-            args=("早八人", ),
-        )
-        self.add_scheduled_task(
-            job_func=self.remind, 
-            name="起床提醒", 
-            interval="30s", 
-            max_runs=10, 
-            args_provider=lambda:(
-                datetime.datetime.now().hour, 
-                datetime.datetime.now().minute
-            ),
-        )
-        self.add_scheduled_task(
-            job_func=self.exam, 
-            name="考试提醒",
-            interval="2025-03-27 13:12:20",
-            kwargs={"subject":"物理"}
-        )
-    
-    def zaoba(self, extra):
-        print("你好, 早八人")
-        print(extra)
-    
-    def remind(self, hour, minute):
-        print(f"起床了, 已经 {hour} 点 {minute} 分了")
-        
-    def exam(self, subject):
-        print(f"要考试了, 是 {subject}")
-```
-
-## 不同类型的任务
+### 注册不同类型的任务
 
 通过 `interval` 参数来明确任务类型.
 
@@ -4686,7 +4675,7 @@ class ZaoBa(BasePlugin):
 
 任务的时间精度有限, 大约有 5s 的误差.
 
-## 任务回调函数
+### 任务回调函数
 
 `job_func` 参数为任务回调函数, 该函数会在任务触发时执行. 会传入一些参数, 参数传入规则如下:
 
@@ -4706,8 +4695,6 @@ class ZaoBa(BasePlugin):
 
 你也可以用 lambda 表达式之类的来实现函数传参.
 
-
-## 任务执行
 
 ### 最大执行次数
 
@@ -4741,6 +4728,33 @@ permalink: /guide/qr8yp7sn/
 
 [安装和使用插件](../1.%20快速开始/3.%20安装和使用插件.md)
 [Windows 一键安装](../1.%20快速开始/1.4%20Windows%20一键安装.md)
+
+
+
+---
+title: 个人插件
+createTime: 2025/04/22 10:07:54
+permalink: /guide/persoplg/
+---
+
+## 用途
+
+插件的开发中要求插件完全独立存在，也就是**不允许插件调用没有安装在系统里的第三方库**。有时候希望用[主动模式](../1.%20快速开始/2.%20开发指南.md#主动模式)做开发方便管理，但是又想使用插件模式的一些功能，比如定时任务。
+
+此时会出现矛盾：插件项目也许会依赖主动模式下的一些文件，但 NcatBot 不允许插件使用 `plugins/MyPlugin` 和 `data/MyPlugin/` 之外的文件。
+
+对于这种情况，可以考虑个人插件的模式。
+
+## 原理
+
+NcatBot 在文档中声明了这两个操作不允许，但**实际上没有做严格的限制**，因此只需要通过相对导入的方式定位到 `plugins/MyPlugin` 以外的部分即可。
+
+这样的插件往往与主动模式开发的项目绑定，不能使用 NcatBot 的插件体系发布，故被称为个人插件。
+
+分发这样的项目时，需要将插件和项目一起分发。
+
+
+
 
 
 
@@ -4803,6 +4817,10 @@ Windows 的防火墙策略拦截了 6099 端口, 请检查防火墙设置。
 Windows 已保护你的电脑
 Microsoft Defender SmartScreen 阻止了无法识别的应用启动。运行此应用可能会导致你的电脑存在风险。
 
+### 手动通过 WebUI 配置 NapCat 时，无法连接到
+
+WebUI 中检查是否 "启用" 了 WebSocket 服务器。
+
 ---
 title:  运行时常见问题
 createTime: 2025/03/26 08:41:23
@@ -4814,6 +4832,14 @@ permalink: /guide/8v15vh4m/
 这是 QQ 的风控. 建议是==不要频繁切换登录地点==, 也不要==频繁启动 NapCat==.
 
 Ncatbot 运行结束后不会关闭 NapCat 服务, 下次运行时会直接连接上次开启的 NapCat 服务, 请避免频繁启动 NapCat.
+
+### 授权操作超时, 连接 WebUI 成功但无法获取授权信息
+
+连接 WebUI 存在问题，以下是解决方案：
+
+1. 更新 Ncatbot 到最新版本(推荐)
+2. 使用 `bot.run(enable_webui_interaction=False)` 跳过基于 WebUI 接口的检查
+3. 如果 1 和 2 都没效果，请检查系统防火墙（尤其是 Windows Server）
 
 ---
 title:  开发时常见问题
@@ -5068,16 +5094,245 @@ async def test(self, message: PrivateMessage):
 - 只有一个处理器为该事件添加了结果，所以使用 `(await self.publish_async(...))[0]` 获取结果，再根据插件文档的说明正确解读。
 
 ---
-title: 早八提醒插件
+title: 上传和获取文件
+createTime: 2025/04/22 14:54:49
+permalink: /guide/to4czozs/
+---
+
+## 上传文件
+
+发送文件。
+
+::: tip
+由于 NapCat 的一些原因, 发送**视频**建议以上传文件的形式进行.
+:::
+
+[详细文档](../../4.%20API%20参考/2.%20主要%20API%20及其使用.md#上传文件)
+
+### 通过文件消息发送
+
+```python
+from ncatbot.core import BotClient
+bot = BotClient()
+api = bot.run_blocking(bt_uin="123456") # 这里写你 bot 的 QQ 号
+api.post_private_file(user_id="123456", file = "path/to/file") # 这里写接收者的 QQ 号和文件的路径
+api.post_private_file(user_id="123456", video = "path/to/video") # 这里写接收者的 QQ 号和视频的路径
+```
+
+- 路径一般写**绝对路径**，也可以写 url。写相对路径可能会出错。
+- 发送群文件的文件消息，应该使用 `api.post_group_file` 和 `group_id`，其它格式一致。
+
+
+### 通过专用上传接口发送
+
+专用接口为 `bot.upload_group_file`，群文件专用。
+
+参考详细文档。
+
+## 获取文件
+
+下载文件，下载群文件，整理群文件。
+
+[详细文档](../../4.%20API%20参考/2.%20主要%20API%20及其使用.md#获取文件)
+
+---
+title: 主动发送消息
+createTime: 2025/04/22 13:21:39
+permalink: /guide/activesm/
+---
+
+## 代码示例
+
+```python
+from ncatbot.core import BotClient
+
+bot = BotClient()
+api = bot.run_blocking(bt_uin="123456", root="1234567") # 启动 NcatBot, NcatBot 接口可用时返回 API 实例
+api.post_private_msg_sync(12345678, "你好") # 此时 NcatBot 已经启动完成, 可以正常使用接口
+bot.exit()
+print("退出")
+```
+
+- 应该不太需要解释，启动后直接调用 API 发送消息。
+- 只要 NcatBot 处于运行状态，同进程任何位置都可以使用 `BotAPI` 实例来调用接口。
+- 可以使用全局变量、传参等方式，将 `BotAPI` 实例传递到其他模块中，方便其他模块调用接口。
+- 主动发送消息和回调函数不冲突，在上面的代码中你仍然可以注册回调函数，在收到消息时做一些事情。
+
+
+---
+title: 发送合并转发消息
+createTime: 2025/04/22 15:21:39
+permalink: /guide/mtransfer/
+---
+
+## 发送转发消息
+
+[参考](../../4.%20API%20参考/3.%20其它%20API%20介绍.md)中查找包含 `single` 字段的函数原型。
+
+```python
+from ncatbot.core import BotClient
+bot = BotClient()
+api = bot.run_blocking(bt_uin="123456", root="1234567") # 替换为实际 Bot QQ 号和 root QQ 号
+api.forward_friend_single_msg("123456", "132456789") # 第一个参数替换为实际接受者 QQ 号，第二个参数中替换为实际的消息 ID
+```
+
+## 发送合并转发消息
+
+[参考](../../4.%20API%20参考/3.%20其它%20API%20介绍.md#发送合并转发消息)
+
+```python
+from ncatbot.core import BotClient
+bot = BotClient()
+api = bot.run_blocking(bt_uin="123456", root="1234567")
+api.send_group_forward_msg("123456", ["132456789", "123456789"]) # 第一个参数替换为实际群号，第二个参数全部替换为实际的消息 ID
+```
+
+NcatBot 不支持伪造合并转发消息。
+
+
+---
+title: 发送复杂消息
+createTime: 2025/04/22 15:21:39
+permalink: /guide/sendcomm/
+---
+
+## 发送复杂消息
+
+下面一串用于检索增强。
+
+- 发送图片。
+- 发送@，发送 @，发送at，发送 at，发送At，发送 At，发送AT，发送AT
+- 发送表情包。
+- 发送表情。
+
+[参考](../../4.%20API%20参考/2.%20主要%20API%20及其使用.md)
+
+```python
+from ncatbot.core import BotClient, MessageChain, Text, At, Image, Face, Reply
+
+bot = BotClient()
+api = bot.run_blocking(bt_uin="123456") # 替换为实际的 BOT QQ 号
+
+message = MessageChain([
+    "喵喵喵~",
+    Text("你好, 这是一条复杂的测试消息"),
+    At(123456), # 替换为实际的 QQ 号
+    Image(r"meow.jpg"), # 替换为你自己的图片路径
+    [
+        Face(123), # 替换为实际的 QQ 表情 ID
+        Image("https://ghfast.top/https://raw.githubusercontent.com/huan-yp/image_space/master/img/202504081258124.png"), # 替换为你想发的图片路径
+        Reply(123456), # 替换为实际的消息 ID
+    ]
+])
+message += MessageChain(["咕咕咕"])
+message = message + At(123456) # 替换为实际的 QQ 号
+api.post_group_msg_sync(group_id=123456, rtf=message) # 替换为实际的群号
+```
+
+效果展示：
+
+![效果展示](https://ghfast.top/raw.githubusercontent.com/huan-yp/image_space/master/img/202504221424416.png)
+
+## 发送音乐卡片
+
+咕咕咕
+
+---
+title: 处理好友请求和加群请求
+createTime: 2025/04/22 13:21:39
+permalink: /guide/friendag/
+---
+
+## 主动模式
+
+```python
+from ncatbot.core import BotClient, Request
+import time
+
+def handle_request(msg: Request):
+    # 同步版本
+    comment = msg.comment # 获取验证信息
+    
+    if "特定关键词" in comment:
+        msg.reply_sync(True, comment="请求已通过")
+    else:
+        msg.reply_sync(False, comment="请求被拒绝")
+
+async def handle_request_async(msg: Request):
+    # 异步版本
+    comment = msg.comment     # 获取验证信息
+    
+    if "特定关键词" in comment:
+        await msg.reply(True, comment="请求已通过")
+    else:
+        await msg.reply(False, comment="请求被拒绝")
+
+bot = BotClient()
+bot.add_request_handler(handle_request)
+bot.run_blocking(bt_uin="123456", root="1234567")
+time.sleep(1000) # 睡眠, 此时 NcatBot 仍然在运行，收到好友请求后将调用 handle_request 函数
+bot.exit() # 退出 NcatBot
+```
+
+- `add_request_handler` 用于注册 Request 事件处理器，好友请求和加群请求属于 Request 类事件。
+- 上面代码包含同步和异步两个版本，功能完全一致，且都支持使用 `add_request_handler` 添加。
+- 也可以使用修饰器来注册回调函数，参考[回调函数](../../3.%20事件处理/1.%20回调函数.md)。
+
+## 插件模式
+
+请先了解插件项目的文件结构，参考[了解插件](../../6.%20开发%20NcatBot%20插件/1.%20了解%20NcatBot%20插件.md)
+
+```python
+from ncatbot.plugin import BasePlugin, CompatibleEnrollment
+from ncatbot.core import Request
+
+bot = CompatibleEnrollment()
+
+class RequestHandlerPlugin(BasePlugin):
+    name = "RequestHandler"
+    version = "1.0"
+
+    @bot.request_event()
+    async def handle_request(self, msg: Request):
+        comment = msg.comment
+        if "特定关键词" in comment:
+            await msg.reply(True, comment="请求已通过")
+        else:
+            await msg.reply(False, comment="请求被拒绝")
+
+    async def handle_request_with_event(self, event: Event):
+        request = event.data
+        comment = request.comment
+        if "特定关键词" in comment:
+            await request.reply(True, comment="请求已通过")
+        else:
+            await request.reply(False, comment="请求被拒绝")
+
+    async def on_load(self):
+        print(f"{self.name} 插件已加载")
+        # self.register_handler("ncatbot.request_event", self.handle_request_with_event)
+
+    async def on_unload(self):
+        print(f"{self.name} 插件已卸载")
+```
+
+- 这里使用了兼容回调函数注册修饰器来注册回调函数。
+- 也可以使用 `register_handler` 来注册**事件处理器**，通过事件总线获取对应的**请求事件**并处理。
+- 事件机制可以参考[事件上报](../../3.%20事件处理/2.%20事件上报.md)和[事件的发布与订阅](../../6.%20开发%20NcatBot%20插件/3.%20插件的交互系统/3.1%20事件的发布和订阅.md)。
+
+---
+title: 定时任务插件
 createTime: 2025/03/27 10:07:54
 permalink: /guide/zaobaplg/
 ---
 
-### 介绍
+## 定时任务插件
 
-这是一个用于演示[定时任务](../6.%20开发%20NcatBot%20插件/4.%20插件高级功能/4.5%20定时任务.md)的插件.
+请先了解插件项目的文件结构，参考[了解插件](../../6.%20开发%20NcatBot%20插件/1.%20了解%20NcatBot%20插件.md)
 
-### 源代码
+只有插件模式有内置的定时任务功能，如果需要在主动模式下使用，参考[个人插件](../../6.%20开发%20NcatBot%20插件/6.%20个人插件.md)。
+
+## 源代码
 
 ```python
 from ncatbot.plugin import BasePlugin, CompatibleEnrollment
@@ -5097,7 +5352,6 @@ class ZaoBa(BasePlugin):
             job_func=self.zaoba, 
             name="早八问候", 
             interval="08:00",
-            max_runs=10, 
             args=("早八人", ),
         )
         self.add_scheduled_task(
@@ -5128,38 +5382,64 @@ class ZaoBa(BasePlugin):
         print(f"要考试了, 是 {subject}")
 ```
 
----
-title: 主动发送消息
-createTime: 2025/04/22 13:21:39
-permalink: /guide/activesm/
----
+## 详细解释
 
-## 代码示例
+[参考](../../6.%20开发%20NcatBot%20插件/4.%20插件高级功能/4.5%20定时任务.md)
+
+
+### zaoba
 
 ```python
-from ncatbot.core import BotClient
-
-bot = BotClient()
-api = bot.run_blocking(bt_uin="123456", root="1234567") # 启动 NcatBot, NcatBot 接口可用时返回 API 实例
-api.post_private_msg_sync(12345678, "你好") # 此时 NcatBot 已经启动完成, 可以正常使用接口
-bot.exit()
-print("退出")
+self.add_scheduled_task(
+    job_func=self.zaoba, 
+    name="早八问候", 
+    interval="08:00",
+    args=("早八人", ),
+)
+def zaoba(self, extra):
+    print("你好, 早八人")
+    print(extra)
 ```
 
-- 应该不太需要解释，启动后直接调用 API 发送消息。
-- 只要 NcatBot 处于运行状态，同进程任何位置都可以使用 `BotAPI` 实例来调用接口。
-- 可以使用全局变量、传参等方式，将 `BotAPI` 实例传递到其他模块中，方便其他模块调用接口。
-- 主动发送消息和回调函数不冲突，在上面的代码中你仍然可以注册回调函数，在收到消息时做一些事情。
+- interval: 这个格式表示每天 8 点执行。
+- args: 静态位置参数，这里表示只有一个确定的参数 `"早八人"`。注意 `("早八人", )` ==括号里面的逗号不能省略==。
+- zaoba: 要执行的任务函数，extra 就是传进来的 `"早八人"`。
 
+### remind
 
----
-title: 处理好友请求和加群请求
-createTime: 2025/04/22 13:21:39
-permalink: /guide/friendag/
----
+```python
+self.add_scheduled_task(
+    job_func=self.remind, 
+    name="起床提醒", 
+    interval="30s", 
+    max_runs=10, 
+    args_provider=lambda:(
+        datetime.datetime.now().hour, 
+        datetime.datetime.now().minute
+    ),
+)
+def remind(self, hour, minute):
+    print(f"起床了, 已经 {hour} 点 {minute} 分了")
+```
 
-## 主动模式
+- interval: 这个格式表示注册开始后每 30 秒执行一次。
+- max_runs: 最大执行次数，这里表示最多执行 10 次。无限次执行直接不写这个参数。
+- args_provider: 动态位置参数生成函数，这里表示每次执行时都获取当前时间，然后获取小时和分钟。
+- remind: 要执行的任务函数，hour 就是 args_provider 传进来的小时，minute 就是传进来的分钟。
 
+### exam
 
+```python
+self.add_scheduled_task(
+    job_func=self.exam, 
+    name="考试提醒",
+    interval="2025-03-27 13:12:20",
+    kwargs={"subject":"物理"}
+)
+def exam(self, subject):
+    print(f"要考试了, 是 {subject}")
+```
 
-## 插件模式
+- interval: 这个格式表示在 2025 年 3 月 27 日 13 点 12 分 20 秒执行。
+- kwargs: 静态关键字参数，这里表示只有一个确定的参数 `subject="物理"`。
+- exam: 要执行的任务函数，subject 就是传进来的 `"物理"`。
