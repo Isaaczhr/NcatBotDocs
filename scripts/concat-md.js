@@ -26,6 +26,7 @@ const mdFiles = [
   'C:\\Users\\huany\\Desktop\\Projects\\QQ-Bot\\docs.ncatbot.xyz\\docs\\notes\\guide\\5. 杂项\\4. 轻松上云.md',
   'C:\\Users\\huany\\Desktop\\Projects\\QQ-Bot\\docs.ncatbot.xyz\\docs\\notes\\guide\\5. 杂项\\5. CLI.md',
   'C:\\Users\\huany\\Desktop\\Projects\\QQ-Bot\\docs.ncatbot.xyz\\docs\\notes\\guide\\5. 杂项\\7. AI+NcatBot.md',
+  'C:\\Users\\huany\\Desktop\\Projects\\QQ-Bot\\docs.ncatbot.xyz\\docs\\notes\\guide\\5. 杂项\\8. 开发技巧.md',
   'C:\\Users\\huany\\Desktop\\Projects\\QQ-Bot\\docs.ncatbot.xyz\\docs\\notes\\guide\\6. 开发 NcatBot 插件\\1. 了解 NcatBot 插件.md',
   'C:\\Users\\huany\\Desktop\\Projects\\QQ-Bot\\docs.ncatbot.xyz\\docs\\notes\\guide\\6. 开发 NcatBot 插件\\2. 插件的加载和卸载.md',
   'C:\\Users\\huany\\Desktop\\Projects\\QQ-Bot\\docs.ncatbot.xyz\\docs\\notes\\guide\\6. 开发 NcatBot 插件\\5. 发布你的插件.md',

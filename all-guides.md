@@ -38,7 +38,7 @@ NcatBot 是 [NapCat](https://github.com/NapNeko/NapCatQQ) 的 Python SDK (开发
 
 - [Linux 安装 NcatBot](./1.1%20Linux%20安装.md)
 
-- [MacOS 安装 NcatBot(暂未支持)](./1.3%20MacOS%20安装.md)
+- [MacOS 安装 NcatBot](./1.3%20MacOS%20安装.md)
 
 - [使用云上 NcatBot 镜像](../5.%20杂项/4.%20轻松上云.md)
 
@@ -53,13 +53,14 @@ createTime: 2025/02/07 15:21:39
 permalink: /guide/MacOSins/
 ---
 
-暂时不提供官方支持, 自行适配, 可[进群](https://qm.qq.com/q/L6XGXYqL86)求助.
+暂时不提供官方一键安装，部分操作需要手动完成。
+
+遇到困难可[进群](https://qm.qq.com/q/L6XGXYqL86)求助.
 
 ## 自行适配提要
 
-1. 注释掉源代码的操作系统检查部分。
-2. 自行完成 NapCat 的登录，参考[使用远端 NapCat](../5.%20杂项/2.%20使用远端%20napcat%20接口.md)。
-3. 正常用。
+[安装方式](../7.%20常见问题/1.%20安装时常见问题.md#各种各样的安装问题通解)
+[使用方式](../1.%20快速开始/1.1%20Linux%20安装.md#执行代码)
 
 ---
 title: Windows 一键安装
@@ -94,7 +95,7 @@ NcatBot 需要 QQ 版本至少达到 `9.9.18` 才能正常运行, 如果你不�
 
 加入我们的[交流群](https://qm.qq.com/q/L6XGXYqL86)可以获取一键安装工具.
 
-你也可以在[这里](https://ghfast.top/https://github.com/liyihao1110/ncatbot/releases/download/3.4.3/main.exe)下载一键安装工具.
+你也可以在[这里(国内)](https://ghfast.top/https://github.com/liyihao1110/ncatbot/releases/download/v3.8.0/main.exe)或者[这里](https://github.com/liyihao1110/ncatbot/releases/download/v3.8.0/main.exe)下载一键安装工具.
 
 ### 一键安装工具的说明
 
@@ -510,26 +511,49 @@ config.set_webui_uri("http://localhost:6099")  # 设置 napcat webui 地址
 config.set_webui_token("napcat")  # 设置 token (webui 的 token)
 ```
 
-## 通过文件指定配置项(弃用)
+## 通过文件指定配置项
 
-::: warning
-这个功能目前弃用, 未来可能继续提供支持.
-:::
+文件指定的配置项优先级较低，可以被其它方式覆盖。
 
-也可以用文件来指定配置项, 用文件指定配置项时, 配置文件的后缀名必须为 yaml. 且==任何一项均不能缺省==.
+NcatBot 会读取工作目录下 `config.yaml` 中的配置信息，并作为配置项加载。以下是完整配置项：
 
-你可以复制[配置项列表](#配置项列表)保存到配置文件, 然后修改配置项的值.
+```yaml
+# NcatBot 配置文件
 
-::: code-tabs
-@tab python
+# 基本配置
+root: "123456"  # root 账号
+bt_uin: "123456"  # bot 账号
+ws_uri: "ws://localhost:3001"  # ws 地址
+webui_uri: "http://localhost:6099"  # webui 地址
+webui_token: "napcat"  # webui 令牌
+ws_token: ""  # ws_uri 令牌
+ws_listen_ip: "localhost"  # ws 监听 ip, 默认只监听本机
+remote_mode: false  # 是否远程模式, 即 NapCat 服务不在本机运行
 
-```python
-from ncatbot.utils import config
+# 更新检查
+check_napcat_update: false  # 是否检查 napcat 更新
+check_ncatbot_update: true  # 是否检查 ncatbot 更新
 
-config.load_config("path/to/config.yaml")
+# 开发者调试
+debug: false  # 是否开启调试模式
+skip_ncatbot_install_check: false  # 是否跳过 napcat 安装检查
+skip_plugin_load: false  # 是否跳过插件加载
+
+# 插件加载控制
+# 白名单和黑名单互斥，只能设置其中一个
+# 如果都不设置，则加载所有插件
+# plugin_whitelist:  # 插件白名单，为空表示不启用白名单
+#   - "plugin1"
+#   - "plugin2"
+# plugin_blacklist:  # 插件黑名单，为空表示不启用黑名单
+#   - "plugin3"
+#   - "plugin4"
+
+# NapCat 行为
+stop_napcat: false  # NcatBot 下线时是否停止 NapCat
+enable_webui_interaction: true  # 是否允许 NcatBot 与 NapCat webui 交互
+report_self_message: false  # 是否报告 Bot 自己的消息
 ```
-
-:::
 
 ## 配置项缺省
 
@@ -2734,67 +2758,191 @@ permalink: /guide/easytogo/
 
 
 ---
-title:  Ncatbot CLI
-createTime: 2025/03/23 16:45:00
-permalink: /guide/usenccli/
+title: CLI
+createTime: 2025/03/05 20:00:05
+permalink: /guide/ncatbotcli/
 ---
 
+## 简介
+
+NcatBot CLI 是一个命令行工具，用于管理和控制 NcatBot 的运行。它提供了丰富的命令来管理插件、配置机器人以及执行各种系统操作。
+
+## 快速开始
 
 ### 启动 CLI
 
-确保当前 Python 环境安装了 NcatBot.
+确保当前 Python 环境已安装 NcatBot。
 
-执行 `python -m ncatbot.cli.main [path]` 可以启动 CLI, `[path]` 是一个可选参数, 用于指定 CLI 工作目录.
+执行以下命令启动 CLI：
 
-==默认工作目录是 `./ncatbot`==, 你需要==先自行创建它==或者干脆使用 `python -m ncatbot.cli.main ./` 将当前目录(或者别的目录)指定为工作目录.
-
-工作目录会用于存放**插件文件夹**, **插件数据**, **日志**等必要的文件.
-
-
-### 启动 NcatBot
-
-第一次进入 CLI 时, 会提示设置 QQ 号. 后续启动时无需再次设置. 在 CLI 中也可以用 `setqq` 修改 QQ 号.
-
-第一次进入 CLI 时还会自动安装 `TestPlugin` 插件, 用于测试 NcatBot 的基本功能, 后续可以使用 `remove TestPlugin` 卸载插件.
-
-启动后输出以下提示信息:
-
-```shell
-工作目录:  C:\Users\huany\Desktop\Projects\QQ-Bot\backend
-欢迎使用 NcatBot CLI!
-当前 QQ 号为: 123456
-支持的命令:
-1. 'install <插件名> [--fix]' - 安装插件
-2. 'setqq' - 重新设置 QQ 号
-3. 'start' - 启动 NcatBot
-4. 'update' - 更新 NcatBot
-5. 'remove <插件名> ' - 卸载插件
-6. 'list' - 列出已安装插件
-7. 'exit' - 退出 CLI 工具
-请输入命令: 
+```bash
+python -m ncatbot.cli.main [path]
 ```
 
-在 CLI 中输入 `start` 并回车即可启动 NcatBot.
+其中 `[path]` 是一个可选参数，用于指定 CLI 工作目录，默认工作目录为执行此命令的目录。
 
-### NcatBot-CLI 命令
+### 直接执行命令
 
-#### `install <插件名> [--fix]`
+CLI 支持不进入交互模式直接执行命令：
 
-对于已经发布到[插件商店](https://github.com/ncatbot/ncatbot-plugins)的插件, 可以使用 CLI 的 `install` 命令自动安装.
+```bash
+python -m ncatbot.cli.main -c "命令" [参数...]
+```
 
-例如查看[插件列表](https://github.com/ncatbot/NcatBot-Plugins/tree/main/plugins)找到已有的插件 `TestPlugin` 后, 可以使用 `install TestPlugin` 命令安装插件.
+例如：
+```bash
+# 直接启动 NcatBot
+python -m ncatbot.cli.main -c start
 
-`--fix` 是一个可选参数, 用于尝试修复没有被正确安装的插件.
+# 安装插件
+python -m ncatbot.cli.main -c install TestPlugin
 
-#### `start`
+# 列出已安装插件
+python -m ncatbot.cli.main -c list
 
-启动 NcatBot.
+# 创建一个模板插件(名为 MyPlugin)
+python -m ncatbot.cli.main -c new MyPlugin
+```
 
-#### `update`
+### 首次运行
 
-更新 NcatBot. 会使用 pip 从阿里源(`https://mirrors.aliyun.com/pypi/simple/`)安装最新版本的 NcatBot, 安装之后会关闭 CLI.
+首次运行 CLI 时：
+1. 系统会提示设置 QQ 号
+2. 自动安装 `TestPlugin` 插件用于测试
+3. 创建必要的工作目录结构
 
-同时也会询问是否更新 NapCat
+## 命令系统
+
+CLI 采用命令注册系统，所有命令都通过装饰器注册到全局命令注册表中。每个命令都包含以下信息：
+- 命令名称
+- 命令描述
+- 使用说明
+- 帮助文本
+- 命令别名
+
+### 系统命令
+
+#### start
+- 用法：`start`
+- 别名：`s`, `run`
+- 描述：启动 NcatBot
+
+#### setqq
+- 用法：`setqq`
+- 别名：`qq`
+- 描述：设置或更新 QQ 号
+
+#### update
+- 用法：`update`
+- 别名：`u`, `upgrade`
+- 描述：更新 NcatBot 和 NapCat
+- 功能：
+  - 更新 NapCat 版本
+  - 从阿里源更新 NcatBot
+  - 更新完成后需要重新启动 CLI
+
+#### exit
+- 用法：`exit`
+- 别名：`quit`, `q`
+- 描述：退出 CLI 工具
+
+### 插件管理命令
+
+#### install
+- 用法：`install <插件名> [--fix]`
+- 别名：`i`
+- 描述：安装或更新插件
+- 参数：
+  - `--fix`：尝试修复安装失败的插件，或者尝试覆盖安装
+
+#### remove
+- 用法：`remove <插件名>`
+- 别名：`r`, `uninstall`
+- 描述：卸载指定插件
+
+#### list
+- 用法：`list`
+- 别名：`l`, `ls`
+- 描述：列出已安装的插件及其版本
+
+#### list_remote
+- 用法：`list_remote`
+- 别名：`lr`
+- 描述：列出远程仓库中可用的插件
+
+#### create
+- 用法：`create <插件名>`
+- 别名：`new`, `template`
+- 描述：创建新的插件模板
+- 功能：
+  - 创建插件目录结构
+  - 生成基本代码文件
+  - 创建配置文件
+  - 生成 README 文档
+
+### 信息命令
+
+#### help
+- 用法：`help [命令名]`
+- 别名：`h`, `?`
+- 描述：显示命令帮助信息
+- 参数：
+  - `命令名`：显示指定命令的详细帮助
+
+#### version
+- 用法：`version`
+- 别名：`v`, `ver`
+- 描述：显示 NcatBot 版本信息
+
+## 工作目录结构
+
+CLI 的工作目录包含以下内容：
+```
+
+plugins/          # 插件目录
+|   ├── plugin1/     # 插件1
+|   └── plugin2/     # 插件2
+├── number.txt       # QQ 号配置文件
+└── logs/            # 日志目录
+```
+
+## 插件开发
+
+### 创建新插件
+
+使用 `create` 命令创建新插件模板：
+
+```bash
+create MyPlugin
+```
+
+或者不进入 CLI 直接执行命令
+
+```bash
+python -m ncatbot.cli -c create MyPlugin
+```
+
+这将创建一个包含以下文件的插件模板，插件名为 `MyPlugin`：
+- `__init__.py`：插件入口文件
+- `main.py`：插件主文件
+- `README.md`：插件文档
+- `.gitignore`：Git 忽略文件
+- `requirements.txt`：依赖项文件
+
+### 插件模板结构
+
+插件模板包含以下基本功能：
+- 群消息事件处理
+- 私聊消息事件处理
+- 配置项管理
+- 功能注册系统
+
+## 注意事项
+
+1. 确保在使用 CLI 前已正确安装 NcatBot
+2. 建议使用稳定的网络环境进行插件安装和更新
+3. 定期使用 `update` 命令保持 NcatBot 为最新版本
+4. 插件安装失败时，可以尝试使用 `--fix` 参数进行修复
 
 ---
 title: AI+NcatBot
@@ -2821,6 +2969,17 @@ chatgpt 和 grok 也有很好的效果，但不推荐使用国内的其它大语
 
 
 
+
+---
+title: 开发技巧
+createTime: 2025/04/30 23:21:39
+permalink: /guide/devtrick/
+---
+
+## 优化重载时间
+
+- [配置项](../2.%20基本开发/4.%20配置项.md)使用 `enable_webui_interaction=False` 跳过检查节省加载时间
+- 使用插件[热重载](../6.%20开发%20NcatBot%20插件/3.%20插件的交互系统/3.4%20内置功能.md#插件热重载)功能。
 
 ---
 title: 了解 NcatBot 插件
@@ -3030,6 +3189,10 @@ from ncatbot.core import GroupMessage
 
 - `BasePlugin`: 插件基类. 所有的插件必须是 `BasePlugin` 的派生类, 否则无法被正常加载.
 - `CompatibleEnrollment`: 兼容回调函数注册器, 用于快速注册回调函数。至于为什么叫兼容，就涉及 NcatBot 的历史了。
+
+::: tip
+相比于普通的注册器， `CompatibleEnrollment` 提供 `startup_event` 的支持，`startup_event` 在机器人 API 可用时调用回调函数，不传递参数。
+:::
 
 #### 定义插件
 
@@ -3314,28 +3477,29 @@ permalink: /guide/regifunc/
 
 ## 注册功能
 
-注册功能需要在插件**加载时**进行.
+注册功能需要在插件==[加载](../2.%20插件的加载和卸载.md#插件加载)时==进行.
 
 以下函数用于注册功能:
 
 ```python
-def register_default_func(
-    self,
-    handler: Callable[[BaseMessage], Any],
-    permission: PermissionGroup = PermissionGroup.USER.value,
-):
 def register_user_func(
         self,
         name: str,
         handler: Callable[[BaseMessage], Any],
-        filter: Callable[[Event], bool] = None,
-        raw_message_filter: Union[str, re.Pattern] = None,
+        filter: Callable = None,
+        prefix: str = None,
+        regex: str = None,
         permission_raise: bool = False,
+        description: str = "",
+        usage: str = "",
+        examples: List[str] = None,
+        tags: List[str] = None,
+        metadata: Dict[str, Any] = None,
 ):
 def register_admin_func(...)
 ```
 
-### `register_default_func`
+### `register_default_func` (3.8.x 起弃用)
 
 注册一个默认功能, 如果一条消息没有触发==默认功能所在插件的任何其它功能, 也没有触发内置功能==, 则会触发默认功能.
 
@@ -3351,12 +3515,18 @@ def register_admin_func(...)
 
 - `name`: 功能名称, 用于建立权限结构, 该功能的权限节点为 `<plugin_name>.<name>`.
 功能.
-
-- `raw_message_filter`: 功能触发条件, 接受一个 `str` 或者 `re.Pattern` 类型的参数, 如果消息==前缀和指定的 `str` 值一致==, 或者 ==`re.match(raw_message_filter, message.raw_message)` 返回 `True`==(正则表达式从头匹配匹配成功), 则触发该功能, 与 `filter` 互斥.
-  
-- `filter`: 功能触发条件, 接受一个 `Event` 类型的参数, 必须定义为==同步函数==, 返回一个 `bool` 值, 如果为 `True` 则触发该功能, 与 `raw_message_filter` 互斥.
-  
+- `handler`: 功能处理函数, 接受一个 `BaseMessage` 类型的参数, .
+- `filter`: 自定义过滤函数, 接受一个 `Event` 类型的参数, 返回布尔值表示是否触发功能. 如果为 `None` 则不进行过滤.
+- `prefix`: 前缀匹配字符串, 如果消息以该前缀开头则触发功能. 例如 `prefix="/help"` 会匹配以 "/help" 开头的消息.
+- `regex`: 正则表达式字符串, 如果消息匹配该正则表达式则触发功能. 例如 `regex="\d*"` 会匹配包含任意数量数字的消息. 可以使用 Python 的 re 模块支持的所有正则表达式语法.
+- `description`: 功能描述, 用于帮助文档.
 - `permission_raise`: 是否针对群聊提权, 如果 `user_id` (消息发送者 QQ 号) 为 admin 级别及以上权限, 则临时提升消息来源群聊的权限为 `root`. 私聊被分在一个特殊的群组, 权限为 `root`.
+- `usage`: 使用说明, 用于帮助文档.
+- `examples`: 使用示例列表, 用于帮助文档.
+- `tags`: 功能标签列表, 用于功能分类.
+- `metadata`: 额外元数据字典, 可以存储任意自定义数据.
+
+注意: `filter`, `prefix`, `regex` 三个参数可以组合使用, 组合时需要同时满足所有条件才会触发功能. 如果都为 `None` 则该功能会被每条消息触发(不推荐).
 
 ### `register_admin_func`
 
@@ -3464,6 +3634,18 @@ def register_config(
 如果 `user_id` 已经具有管理员权限, 则会取消其管理员权限.
 
 BOT 的回复消息会反应管理员权限的状态
+
+## 插件热重载
+
+默认为==管理员功能==, 用于热重载插件。调试时非常有用。
+
+触发格式: 向机器人私聊或者在存在机器人的群聊中发送 `/reload [-f] <plugin_name>`
+
+- `[-f]`: 可选, 用于强制加载插件, 即使插件未加载也会尝试加载.
+- `<plugin_name>`: 插件名称.
+
+如果插件未加载且未使用 `-f` 参数, 则会提示使用 `-f` 参数强制加载.
+
 
 ## 管理权限
 
@@ -3704,6 +3886,29 @@ title:  安装时常见问题
 createTime: 2025/02/09 16:34:49
 permalink: /guide/prgor4t7/
 ---
+
+### 各种各样的安装问题通解
+
+1. 手动安装 NapCat。
+   - [Windows](https://napneko.github.io/guide/boot/Shell#napcat-shell-win%E6%89%8B%E5%8A%A8%E5%90%AF%E5%8A%A8%E6%95%99%E7%A8%8B)
+   - [Linux](https://napneko.github.io/guide/boot/Shell#napcat-installer-linux%E4%B8%80%E9%94%AE%E4%BD%BF%E7%94%A8%E8%84%9A%E6%9C%AC-%E6%94%AF%E6%8C%81ubuntu-20-debian-10-centos9)
+   - [MacOS](https://napneko.github.io/guide/boot/Shell#napcat-macos-macos%E5%AE%89%E8%A3%85%E5%B7%A5%E5%85%B7)
+2. 在 NapCat WebUI 界面完成登录。
+   - 输入 `localhost:6099/webui` 或者 `服务器公网IP:6099/webui` 访问 WebUI
+   - 使用默认 token `napcat` 进入 WebUI 界面
+   - 手机扫描登录 Bot QQ。
+3. 配置 NapCat Websocket 服务器。
+   - 2 的界面中，点击 "网络配置"
+   - 点击 "新建"，选择 `Websocket服务器`
+   - 勾选 "启用"
+   - 输入 "名称"，随便输入一个，比如 `NcatBot`
+4. 正确填写 NcatBot 如下[配置项](../2.%20基本开发/4.%20配置项.md)：
+   - `ws_uri`: 如果你在 3. 没有干别的事情, 那么这里可以用默认值。如果要填写，应该填写为 `IP地址:Port`。`IP地址` 是 `localhost` 或者 `服务器公网IP`；`Port` 为步骤 3 中的 `Port`，默认 `3001`。
+   - `ws_token`: 如果你在 3.没有干别的事情, 那么这里也可以用默认值。如果要填写，应该填写为步骤 3 中 `Token`。
+
+下面是步骤三的图片：
+
+![image-20250430200311392](https://ghfast.top/https://raw.githubusercontent.com/huan-yp/image_space/master/img/202504302003465.png)
 
 
 ### Windows10 为什么连接成功了发 "测试" 还是没反应
