@@ -4133,7 +4133,7 @@ class LLM_API(BasePlugin):
         self.register_config("api", DEFAULT_API)
         self.register_config("model", DEFAULT_MODEL) # 注册三个配置项
         self.register_handler("LLM_API.main", self.main) # 注册事件(Event)处理器
-        self.register_admin_func("test", self.test, raw_message_filter="/tllma", permission_raise=True) # 注册一个管理员功能, 需要提权以便在普通群聊中触发
+        self.register_admin_func("test", self.test, prefix="/tllma", permission_raise=True) # 注册一个管理员功能, 需要提权以便在普通群聊中触发
     
     async def test(self, message: PrivateMessage):
         result = (await self.publish_async(Event("LLM_API.main", {
